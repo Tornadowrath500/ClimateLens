@@ -1,0 +1,119 @@
+name: Import FairLens source snapshot (verified)
+
+on:
+  push:
+    branches:
+      - automation/import-fairlens-snapshot
+    paths:
+      - incoming/fairlens-upload-14.b64
+
+permissions:
+  contents: write
+
+jobs:
+  verify-and-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: automation/import-fairlens-snapshot
+          persist-credentials: false
+
+      - name: Reassemble and verify archive
+        run: |
+          python - <<'PY'
+          import base64, hashlib, io, shutil, tarfile
+          from pathlib import Path, PurePosixPath
+          incoming = Path("incoming")
+          chunks = [incoming / f"fairlens-upload-{i}.b64" for i in range(1, 15)]
+          encoded = "".join(p.read_text(encoding="ascii").strip() for p in chunks)
+          if len(encoded) != 66184:
+              raise RuntimeError(f"Wrong encoded length {len(encoded)}; expected 66184.")
+          archive_bytes = base64.b64decode(encoded, validate=True)
+          digest = hashlib.sha256(archive_bytes).hexdigest()
+          expected = "d90e90bceae19b1cea181b5203edd3aa75091e1c03c75fd9f51b7fd0c48e1a22"
+          if digest != expected:
+              raise RuntimeError(f"Snapshot checksum mismatch: {digest}")
+          root = Path.cwd().resolve()
+          extracted = set()
+          with tarfile.open(fileobj=io.BytesIO(archive_bytes), mode="r:gz") as archive:
+              for member in archive.getmembers():
+                  parts = PurePosixPath(member.name).parts
+                  if not parts or parts[0] != "ClimateLens-main" or len(parts) < 2:
+                      continue
+                  rel = PurePosixPath(*parts[1:])
+                  if rel.is_absolute() or ".." in rel.parts:
+                      raise RuntimeError(f"Unsafe archive path: {member.name}")
+                  if any(p in {".git", "__pycache__", ".pytest_cache", ".venv", "venv"} for p in rel.parts):
+                      continue
+                  if rel.suffix in {".pyc", ".pyo"} or not member.isfile():
+                      continue
+                  target = (root / Path(*rel.parts)).resolve()
+                  if root not in target.parents:
+                      raise RuntimeError(f"Archive path escapes repository: {member.name}")
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  source = archive.extractfile(member)
+                  if source is None:
+                      raise RuntimeError(f"Cannot read archive member {member.name}")
+                  with source, target.open("wb") as dst:
+                      shutil.copyfileobj(source, dst)
+                  extracted.add(rel.as_posix())
+          required = {
+              "pages/5_Findings_and_Report.py", "pages/6_Methodology_and_Limitations.py",
+              "src/fairlens/report.py", "tests/conftest.py", "tests/test_core.py",
+              "tests/test_app_smoke.py", "docs/HANDOFF.md"
+          }
+          missing = required - extracted
+          if missing or len(extracted) < 35:
+              raise RuntimeError(f"Project snapshot incomplete: missing={sorted(missing)}, extracted={len(extracted)}")
+          print(f"Extracted {len(extracted)} files; verified SHA-256 {digest}.")
+          PY
+
+      - name: Remove import artifacts and generated metadata
+        run: |
+          git rm -r --cached src/fairlens.egg-info 2>/dev/null || true
+          rm -rf src/fairlens.egg-info
+          rm -f incoming/fairlens-upload-*.b64 incoming/fairlens-fix-part-*.b64 incoming/fairlens-real-part-*.b64 incoming/fairlens-source-part-*.b64
+          rm -f .github/workflows/import-fairlens-snapshot.yml .github/workflows/import-fairlens-complete.yml .github/workflows/import-fairlens-final.yml .github/workflows/import-fairlens-safe.yml
+          rmdir incoming 2>/dev/null || true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install app and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install -e .
+          python -m pip install "streamlit>=1.40,<2"
+
+      - name: Compile and run full test suite
+        run: |
+          python -m compileall -q app.py pages src/fairlens scripts tests
+          python -m pytest --collect-only -q | tee /tmp/collect.txt
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          m = re.search(r"(\d+) tests? collected", Path("/tmp/collect.txt").read_text())
+          if not m or int(m.group(1)) < 40:
+              raise SystemExit("Expected >=40 tests including Streamlit AppTest checks.")
+          print(f"Collected {m.group(1)} tests.")
+          PY
+          python -m pytest -q
+
+      - name: Commit tested source snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --check
+          git diff --cached --quiet && exit 1
+          git commit -m "Import tested FairLens application"
+          auth="$(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
+          git -c "http.extraheader=AUTHORIZATION: basic $auth" push origin HEAD:automation/import-fairlens-snapshot
