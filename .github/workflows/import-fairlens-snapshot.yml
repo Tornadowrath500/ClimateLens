@@ -5,7 +5,7 @@ on:
     branches:
       - automation/import-fairlens-snapshot
     paths:
-      - incoming/fairlens-source.tar.gz.b64
+      - incoming/fairlens-source-part-5.b64
 
 permissions:
   contents: write
@@ -21,7 +21,7 @@ jobs:
           ref: automation/import-fairlens-snapshot
           persist-credentials: false
 
-      - name: Extract reviewed source files safely
+      - name: Extract reviewed FairLens source safely
         run: |
           python - <<'PY'
           import base64
@@ -30,8 +30,10 @@ jobs:
           import tarfile
           from pathlib import Path, PurePosixPath
 
-          archive_path = Path("incoming/fairlens-source.tar.gz.b64")
-          archive_bytes = base64.b64decode(archive_path.read_text(encoding="ascii"))
+          incoming = Path("incoming")
+          chunks = [incoming / f"fairlens-source-part-{i}.b64" for i in range(1, 6)]
+          encoded = "".join(path.read_text(encoding="ascii").strip() for path in chunks)
+          archive_bytes = base64.b64decode(encoded, validate=True)
           root = Path.cwd().resolve()
           prefix = "ClimateLens-main"
 
@@ -79,7 +81,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          rm -f incoming/fairlens-source.tar.gz.b64
+          rm -f incoming/fairlens-source-part-*.b64
           rm -f .github/workflows/import-fairlens-snapshot.yml
           rmdir incoming 2>/dev/null || true
           git config user.name "github-actions[bot]"
