@@ -1,0 +1,89 @@
+Metadata-Version: 2.4
+Name: fairlens
+Version: 0.1.0
+Summary: A transparent, human-centered educational model-auditing prototype.
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+
+# FairLens
+
+**Understand the decisions behind the model.**
+
+FairLens is an educational, human-centered model-auditing prototype. It helps a reviewer inspect a historical credit-risk classifier, compare predictive performance, examine differences in model outcomes between groups, and test the trade-offs created by changes to a decision threshold.
+
+> **Important:** This is an educational benchmark, not a lending system, credit recommendation, or financial advice. It must never be used to make decisions about real applicants.
+
+## Product principles
+
+- **Transparent:** Each result should identify its data source, model, evaluation split, metric definition, and relevant sample count.
+- **Human-centered:** Explain findings in plain language before exposing technical detail.
+- **Careful with fairness claims:** A measured difference is a signal to investigate, not proof of discrimination or its cause.
+- **Honest about uncertainty:** Show denominators and uncertainty where appropriate. Do not collapse multiple dimensions into one unexplained fairness score.
+- **Reproducible:** Keep preprocessing, model selection, and evaluation in explicit, testable Python modules.
+- **No invented evidence:** Never display placeholder metrics as actual findings.
+
+## Initial benchmark
+
+The planned benchmark is the [UCI Statlog (German Credit Data)](https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data), donated in 1994. It contains 1,000 historical examples, 20 input features, and a binary target: 1 = Good, 2 = Bad. The source also provides a cost matrix in which classifying an actually Bad-risk applicant as Good has five times the cost of the reverse error.
+
+The dataset's historical German context is a major limitation. It does not represent current lending practices or today's applicant population. See docs/DATA_AND_ETHICS.md.
+
+## Intended user journey
+
+1. **Understand the data** — inspect its source, target definition, feature types, missingness, and limitations.
+2. **Evaluate the model** — compare a simple baseline with candidate classifiers on a held-out test set.
+3. **Investigate group outcomes** — compare carefully defined group metrics, denominators, and uncertainty.
+4. **Experiment** — explore threshold and mitigation trade-offs without presenting an experiment as a guaranteed fairness fix.
+5. **Review findings** — summarize methods, results, and limitations in a reproducible report.
+
+## Repository structure
+
+    .
+    ├── app.py                  # Streamlit landing page
+    ├── pages/                  # Guided user journey
+    ├── src/fairlens/           # Data, models, metrics, splits
+    ├── scripts/                # Explicit data acquisition commands
+    ├── tests/                  # Automated checks
+    ├── docs/                   # Methodology, roadmap, principles, limitations
+    ├── data/                   # Local data only; not committed
+    ├── requirements.txt
+    └── pyproject.toml
+
+## Quick start
+
+Python 3.11 or newer is recommended.
+
+    python -m venv .venv
+    source .venv/bin/activate
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
+    pip install -e .
+    python -m pytest
+    streamlit run app.py
+
+On Windows PowerShell, activate the environment with:
+
+    .venv\Scripts\Activate.ps1
+
+The application does not silently download data or display fabricated performance numbers. To obtain the benchmark explicitly, run:
+
+    python scripts/download_dataset.py
+
+The downloaded file and manifest remain local and are excluded from Git. See data/README.md.
+
+## Evaluation commitments
+
+- Use stratified training, validation, and final test sets; this is a static classification dataset, not a time-series forecasting task.
+- Select models and thresholds using validation data. Do not tune on the final test set.
+- Compare against the competition's simple baseline: predict every applicant as Good credit risk. Confirm target encoding from the original UCI source.
+- Report class-specific errors, especially the costlier error of predicting Good for an actually Bad case.
+- Report group denominators. Avoid conclusions from tiny groups.
+- Explain that group differences do not establish causation or legal discrimination.
+
+## Current status
+
+This is a starter skeleton. It does not yet contain trained models, measured results, or a completed fairness audit. The first milestone is to reproduce the baseline and model evaluation, then add group metrics with careful interpretation.
+
+## Project licensing
+
+The repository's own software license has **not** been selected yet. The dataset's CC BY 4.0 license is separate from the license for this project's code. The team should agree on a project license before adding one.
