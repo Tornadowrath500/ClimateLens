@@ -21,6 +21,11 @@ PAGES = [
     "pages/4_Experiment_Lab.py",
     "pages/5_Findings_and_Report.py",
     "pages/6_Methodology_and_Limitations.py",
+    "pages/7_Applicant_Map.py",
+    "pages/8_Applicant_Simulator.py",
+    "pages/9_Proxy_Detector.py",
+    "pages/10_Mitigation_Lab.py",
+    "pages/11_Audit_Your_Model.py",
 ]
 
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 import streamlit as st
 
 from fairlens.report import pct, render_markdown
+from fairlens.ui import demo_active
 from fairlens.ui import callout, header, setup_page, show_table, sidebar
 
 setup_page("Findings and report")
@@ -77,6 +78,8 @@ for line in f["next_steps"]:
 st.subheader("Take it with you")
 
 report = render_markdown(f)
+if demo_active():
+    report = "> **SYNTHETIC DEMO DATA: invented records, not real evidence.**\n\n" + report
 
 st.download_button(
     "Download the report (Markdown)",

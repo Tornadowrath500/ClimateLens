@@ -60,3 +60,33 @@ def dataset_path() -> Path:
     """Dataset location; FAIRLENS_DATA_PATH overrides the default."""
     override = os.environ.get(DATA_PATH_ENV)
     return Path(override) if override else DATASET_PATH
+
+
+# ---- plain-language labels for the UCI codes (UCI data dictionary) ---------------------------------
+VALUE_LABELS: dict[str, dict[str, str]] = {
+    "Attribute1": {"A11": "Overdrawn (below 0 DM)", "A12": "Low balance (0 to 200 DM)", "A13": "Healthy (200+ DM or salary paid in)", "A14": "No checking account"},
+    "Attribute3": {"A30": "No credits taken / all repaid", "A31": "All credits at this bank repaid", "A32": "Existing credits repaid on time", "A33": "Past delay in repaying", "A34": "Critical account / credits elsewhere"},
+    "Attribute4": {"A40": "New car", "A41": "Used car", "A42": "Furniture / equipment", "A43": "Radio / TV", "A44": "Domestic appliances", "A45": "Repairs", "A46": "Education", "A47": "Vacation", "A48": "Retraining", "A49": "Business", "A410": "Other"},
+    "Attribute6": {"A61": "Under 100 DM", "A62": "100 to 500 DM", "A63": "500 to 1000 DM", "A64": "1000+ DM", "A65": "Unknown / none"},
+    "Attribute7": {"A71": "Unemployed", "A72": "Under 1 year", "A73": "1 to 4 years", "A74": "4 to 7 years", "A75": "7+ years"},
+    "Attribute9": {"A91": "Male, divorced/separated", "A92": "Female, divorced/separated/married", "A93": "Male, single", "A94": "Male, married/widowed", "A95": "Female, single"},
+    "Attribute10": {"A101": "None", "A102": "Co-applicant", "A103": "Guarantor"},
+    "Attribute12": {"A121": "Real estate", "A122": "Savings agreement / life insurance", "A123": "Car or other", "A124": "Unknown / no property"},
+    "Attribute14": {"A141": "Bank", "A142": "Stores", "A143": "None"},
+    "Attribute15": {"A151": "Rent", "A152": "Own", "A153": "Free housing"},
+    "Attribute17": {"A171": "Unskilled, non-resident", "A172": "Unskilled, resident", "A173": "Skilled employee", "A174": "Management / highly qualified"},
+    "Attribute19": {"A191": "None", "A192": "Yes, registered"},
+    "Attribute20": {"A201": "Yes", "A202": "No"},
+}
+SENSITIVE_COLUMNS = ("Attribute9", "Attribute13", "Attribute20")
+# Inputs a person could plausibly change about a *request* (used for illustrative what-ifs only).
+ACTIONABLE_COLUMNS = ("Attribute1", "Attribute2", "Attribute5", "Attribute6", "Attribute10", "Attribute14")
+
+
+def feature_label(column: str) -> str:
+    return FEATURE_DICTIONARY.get(column, (column,))[0]
+
+
+def value_label(column: str, value) -> str:
+    """Friendly text for a raw value; numbers and unknown codes pass through unchanged."""
+    return VALUE_LABELS.get(column, {}).get(str(value), str(value))
