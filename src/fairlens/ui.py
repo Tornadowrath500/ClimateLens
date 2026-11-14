@@ -25,6 +25,7 @@ from fairlens.data import (
     group_labels,
     load_dataset,
 )
+from fairlens.demo import make_demo_dataset
 from fairlens.evaluation import Audit, OperatingPoint, run_audit
 from fairlens.models import MODEL_NAMES
 
@@ -61,6 +62,20 @@ h1 {{ font-size: 2.5rem !important; line-height: 1.12; }}
 .fl-group {{ border: 1px solid {LINE}; border-radius: 8px; padding: .9rem 1.1rem; background: rgba(255,255,255,.7); }}
 .fl-group .n {{ font-family: 'Newsreader', Georgia, serif; font-size: 2rem; color: {INK}; line-height: 1.1; }}
 [data-testid="stMetric"] {{ background: rgba(255,255,255,.7); border: 1px solid {LINE}; border-radius: 8px; padding: .7rem .9rem; }}
+.fl-hero {{ background: linear-gradient(135deg, {GREEN} 0%, #1f4237 100%); color: #f7f5ef; border-radius: 14px; padding: 1.6rem 1.8rem; margin: .2rem 0 1.2rem; }}
+.fl-hero h2 {{ color: #f7f5ef !important; margin: 0 0 .3rem; }}
+.fl-hero p {{ color: #dfe8e2; margin: 0; max-width: 46rem; line-height: 1.6; }}
+.fl-card {{ border: 1px solid {LINE}; border-radius: 12px; padding: 1rem 1.1rem; background: rgba(255,255,255,.75); height: 100%; }}
+.fl-card h4 {{ margin: 0 0 .25rem; font-size: 1.15rem; }}
+.fl-card p {{ color: {MUTED}; margin: 0; font-size: .93rem; line-height: 1.5; }}
+.fl-chip {{ display: inline-block; padding: .12rem .6rem; border-radius: 999px; font-size: .78rem; font-weight: 600; margin-right: .35rem; border: 1px solid {LINE}; background: #fff; }}
+.fl-chip.good {{ background: #e3f0e9; color: {GREEN}; border-color: #b9d3c6; }}
+.fl-chip.bad {{ background: #f6e8d2; color: #8a5a12; border-color: #e5cfa6; }}
+.fl-chip.demo {{ background: #fff3cd; color: #7a5b00; border-color: #ecd98a; }}
+.fl-bar {{ position: relative; height: 16px; border-radius: 8px; background: linear-gradient(90deg, #f1dfbf, #e8ece6 50%, #bcd6c9); border: 1px solid {LINE}; margin: .5rem 0 1.4rem; }}
+.fl-bar i {{ position: absolute; top: -5px; width: 4px; height: 24px; background: {INK}; border-radius: 2px; }}
+.fl-bar u {{ position: absolute; top: -5px; width: 0; height: 24px; border-left: 2px dashed {AMBER}; text-decoration: none; }}
+.fl-bar span {{ position: absolute; top: 20px; font-size: .72rem; color: {MUTED}; transform: translateX(-50%); white-space: nowrap; }}
 @media (prefers-reduced-motion: reduce) {{ * {{ animation: none !important; transition: none !important; }} }}
 </style>
 """
@@ -147,17 +162,40 @@ def _load(path: str, mtime: float) -> pd.DataFrame:
     return load_dataset(path)
 
 
+def demo_active() -> bool:
+    return bool(st.session_state.get("use_demo_data")) and not dataset_path().exists()
+
+
+@st.cache_data(show_spinner=False)
+def _demo() -> pd.DataFrame:
+    return make_demo_dataset()
+
+
+def demo_banner() -> None:
+    st.markdown(
+        '<span class="fl-chip demo">SYNTHETIC DEMO DATA</span> <span style="color:#7a5b00;font-size:.85rem">'
+        "Invented records with the German Credit layout, for exploring the tools offline. Not real evidence; "
+        "download the real benchmark on the data page for genuine results.</span>",
+        unsafe_allow_html=True,
+    )
+
+
 def require_data() -> pd.DataFrame:
-    """Return the validated dataset, or explain how to get it and stop the page."""
+    """Return the validated dataset (or the clearly-labelled synthetic demo), or explain how to get it and stop."""
     path = dataset_path()
+    if demo_active():
+        demo_banner()
+        return _demo()
     if not path.exists():
         callout(
             "The dataset is not on this computer yet",
             "FairLens never downloads data on its own. Select the button to fetch the UCI German Credit "
-            "file once; it is saved to <code>data/raw/</code> and kept out of Git.",
+            "file once; it is saved to <code>data/raw/</code> and kept out of Git. No internet? "
+            "Explore every tool right now with a clearly-labelled <b>synthetic</b> demo dataset.",
             "caution",
         )
-        if st.button("Download the dataset from UCI", type="primary"):
+        c1, c2 = st.columns(2)
+        if c1.button("Download the dataset from UCI", type="primary"):
             try:
                 with st.spinner("Contacting the UCI repository..."):
                     download_dataset(output_path=path)
@@ -169,6 +207,9 @@ def require_data() -> pd.DataFrame:
                     f"Run `python scripts/download_dataset.py` in a terminal with internet access, "
                     f"or [download it manually]({UCI_URL})."
                 )
+        if c2.button("Explore with synthetic demo data"):
+            st.session_state["use_demo_data"] = True
+            st.rerun()
         st.stop()
     try:
         return _load(str(path), path.stat().st_mtime)
@@ -183,10 +224,13 @@ def _audit(_data: pd.DataFrame, excluded: tuple[str, ...], seed: int, key: float
 
 
 def get_audit(data: pd.DataFrame, settings: Settings) -> Audit:
-    return _audit(data, settings.excluded, RANDOM_STATE, dataset_path().stat().st_mtime)
+    key = -1.0 if demo_active() else dataset_path().stat().st_mtime
+    return _audit(data, settings.excluded, RANDOM_STATE, key)
 
 
 def provenance_note(data: pd.DataFrame) -> None:
+    if demo_active():
+        return demo_banner()
     manifest = dataset_provenance()
     problems = benchmark_shape_warnings(data)
     if not manifest:
@@ -296,3 +340,41 @@ def stability_chart(runs: dict[str, pd.DataFrame]) -> go.Figure:
     fig.add_vline(x=0, line=dict(color=MUTED, dash="dot"))
     fig.update_xaxes(title="Under 25 minus 25 or older: share classified Good (percentage points)", tickformat=".0%")
     return style(fig, 300)
+
+
+# ---- shared widgets for the hands-on tools ------------------------------------------------------
+def score_bar(p: float, threshold: float) -> None:
+    """Horizontal scale from 0 to 1: the solid marker is the model's score, the dashed line the threshold."""
+    st.markdown(
+        f'<div class="fl-bar"><i style="left:calc({p * 100:.1f}% - 2px)"></i><u style="left:{threshold * 100:.1f}%"></u>'
+        f'<span style="left:{p * 100:.1f}%;top:-22px;font-weight:600;color:{INK}">score {p:.2f}</span>'
+        f'<span style="left:{threshold * 100:.1f}%">threshold {threshold:.2f}</span></div>',
+        unsafe_allow_html=True,
+    )
+
+
+def decision_chip(p: float, threshold: float) -> str:
+    good = p >= threshold
+    return f'<span class="fl-chip {"good" if good else "bad"}">Model classification: {"Good" if good else "Bad"} risk</span>'
+
+
+def contribution_chart(table: pd.DataFrame, top: int = 8, height: int = 330) -> go.Figure:
+    t = table.head(top).iloc[::-1]
+    fig = go.Figure(go.Bar(
+        x=t["contribution"], y=[f"{f}: {v}" for f, v in zip(t["feature"], t["value"])], orientation="h",
+        marker_color=[GREEN if c >= 0 else AMBER for c in t["contribution"]],
+        text=[f"{c:+.2f}" for c in t["contribution"]], textposition="outside",
+        hovertemplate="%{y}<br>moves the score by %{x:+.3f}<extra></extra>",
+    ))
+    fig.update_xaxes(title="← pushes toward Bad  |  pushes toward Good →")
+    return style(fig, height)
+
+
+def card(title: str, body: str) -> None:
+    st.markdown(f'<div class="fl-card"><h4>{title}</h4><p>{body}</p></div>', unsafe_allow_html=True)
+
+
+def friendly_profile(row: pd.DataFrame) -> pd.DataFrame:
+    from fairlens.config import feature_label, value_label
+    r = row.iloc[0]
+    return pd.DataFrame({"Input": [feature_label(c) for c in row.columns], "Value": [value_label(c, r[c]) for c in row.columns]})
