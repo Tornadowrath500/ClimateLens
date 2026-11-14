@@ -39,7 +39,12 @@ def group_outcome_metrics(y_true, y_pred, groups, *, good_label: int = 1) -> pd.
     """
     actual = np.asarray(y_true)
     predicted = np.asarray(y_pred)
-    group_values = pd.Series(groups, dtype="object").fillna("Missing / unknown").astype(str)
+    group_values = (
+        pd.Series(groups, dtype="object")
+        .reset_index(drop=True)
+        .fillna("Missing / unknown")
+        .astype(str)
+    )
 
     if actual.ndim != 1 or predicted.ndim != 1 or len(actual) != len(predicted):
         raise ValueError("y_true and y_pred must be one-dimensional arrays of equal length.")
