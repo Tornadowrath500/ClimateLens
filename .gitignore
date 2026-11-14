@@ -23,3 +23,9 @@ models/
 .vscode/
 .idea/
 *.swp
+
+# Build metadata
+*.egg-info/
+
+# Local agent tooling
+.agents/

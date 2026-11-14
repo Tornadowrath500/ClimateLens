@@ -47,3 +47,8 @@ The app and all submission materials must include this sentence.
 ## Repository software license
 
 The benchmark's CC BY 4.0 license applies to the dataset, not automatically to FairLens code. The team has not yet selected a license for its own software. Agree among contributors before adding one.
+
+
+## Final holdout discipline
+
+Exploration and threshold choices use the validation split. The final test split is not displayed on the evaluation or group-outcome pages. A user must deliberately pin a model configuration and decision rule in the Experiment Lab to create one frozen test review per app session. The Findings page reads that snapshot rather than silently evaluating the current sidebar settings.

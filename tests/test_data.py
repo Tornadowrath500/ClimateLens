@@ -30,3 +30,29 @@ def test_validate_dataset_rejects_unexpected_target_labels() -> None:
 def test_make_age_groups_uses_documented_boundary() -> None:
     groups = make_age_groups(pd.Series([24, 25, 30]))
     assert groups.tolist() == ["Under 25", "25 or older", "25 or older"]
+
+
+def test_download_dataset_respects_custom_output_path(tmp_path, synthetic_frame, monkeypatch):
+    import sys
+    from types import SimpleNamespace
+
+    from fairlens.data import download_dataset
+
+    fake_dataset = SimpleNamespace(
+        data=SimpleNamespace(
+            features=synthetic_frame.drop(columns="class"),
+            targets=synthetic_frame[["class"]],
+        )
+    )
+    monkeypatch.setitem(
+        sys.modules,
+        "ucimlrepo",
+        SimpleNamespace(fetch_ucirepo=lambda *, id: fake_dataset),
+    )
+    destination = tmp_path / "custom-location" / "benchmark.csv"
+
+    downloaded = download_dataset(output_path=destination)
+
+    assert destination.exists()
+    assert destination.with_name("dataset_manifest.json").exists()
+    assert len(downloaded) == len(synthetic_frame)

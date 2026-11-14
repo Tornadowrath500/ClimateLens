@@ -1,63 +1,30 @@
 # Roadmap
 
-This roadmap is a sequence of evidence gates, not a promise that every feature will be completed.
+Evidence gates, not promises. [x] = implemented and unit-tested on synthetic data; **verify on the real UCI file** before claiming results.
 
-## Milestone 0 — Reproducible foundation
+## Milestone 0 - Reproducible foundation
+- [x] Structure, conventions, CI workflow, explicit download (script and in-app button)
+- [x] Target-label definitions, schema validation, provenance manifest check
+- [ ] Run the download in a clean environment; record the real schema and manifest
 
-- [x] Repository structure and development conventions
-- [x] Explicit UCI data-download script
-- [x] Target-label definitions checked against UCI
-- [x] Basic schema, baseline, and group-metric tests
-- [ ] Run the download script in a clean environment
-- [ ] Record the actual downloaded schema and manifest
+## Milestone 1 - Baseline
+- [x] All-Good baseline and All-Bad reference; UCI 5:1 cost matrix; data dictionary
+- [x] Stratified train/validation/test split (class x age group)
+- [ ] Reproduce baseline numbers on the real data and check against the UCI description
 
-**Exit condition:** another teammate can reproduce the dataset download and pass the starter tests.
+## Milestone 2 - Models
+- [x] Logistic regression and random forest in leakage-safe pipelines; validation comparison
+- [x] Keep the final test set hidden from exploratory pages; unlock one pinned review per app session
+- [ ] Review instability and calibration on real data
 
-## Milestone 1 — Establish the baseline
+## Milestone 3 - Group audit
+- [x] Counts, rates, 95% Wilson intervals, repeated-split stability, age-removed check
+- [ ] Extend to sex / foreign-worker groups
 
-- [ ] Inspect feature names, value types, and target encoding
-- [ ] Reproduce the all-Good baseline
-- [ ] Calculate the UCI cost-matrix error cost
-- [ ] Write a clear data dictionary
-- [ ] Confirm stratified train/validation/test splits
+## Milestone 4 - Threshold experiment
+- [x] Validation-only slider, cost curve, per-group what-if thresholds, one-time pinned test review
+- [ ] Optional: Fairlearn ThresholdOptimizer for comparison
 
-**Exit condition:** a reproducible baseline report with no model-selection leakage.
-
-## Milestone 2 — Compare candidate models
-
-- [ ] Fit logistic regression and random forest pipelines
-- [ ] Select model and preprocessing using validation data only
-- [ ] Evaluate once on the untouched test set
-- [ ] Report confusion matrices and class-specific metrics
-- [ ] Investigate errors and instability
-
-**Exit condition:** a model comparison that can be reproduced from source.
-
-## Milestone 3 — Descriptive group audit
-
-- [ ] Define the age grouping before inspecting favorable results
-- [ ] Show group sample counts and target composition
-- [ ] Calculate predicted-Good rates and class-specific error rates
-- [ ] Add uncertainty intervals where appropriate
-- [ ] Explain why differences do not establish causation
-
-**Exit condition:** metrics are interpretable, supported by adequate sample sizes, and not presented as proof of discrimination.
-
-## Milestone 4 — Threshold experiment
-
-- [ ] Choose thresholds using validation data only
-- [ ] Compare error trade-offs and the supplied cost matrix
-- [ ] Show how group outcome measures change
-- [ ] Preserve the untouched final test set
-
-**Exit condition:** a transparent experiment with explicit trade-offs, not a claimed fairness fix.
-
-## Milestone 5 — Mitigation and communication
-
-- [ ] Test one documented mitigation method if justified
-- [ ] Compare predictive performance and group outcomes before and after
-- [ ] Include a failure case
-- [ ] Produce a reproducible audit summary
-- [ ] Complete accessibility, usability, and clean-install checks
-
-**Exit condition:** an honest end-to-end demonstration and a concise explanation of what the evidence does and does not support.
+## Milestone 5 - Communication
+- [x] Findings page and Markdown report generated from measured results
+- [ ] One-page write-up and 2-minute demo (see docs/SUBMISSION.md)
