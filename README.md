@@ -24,23 +24,23 @@ The dataset's historical German context is a major limitation. It does not repre
 ## Intended user journey
 
 1. **Understand the data** — inspect its source, target definition, feature types, missingness, and limitations.
-2. **Evaluate the model** — compare a simple baseline with candidate classifiers on a held-out test set.
+2. **Evaluate the model** — compare a simple baseline with candidate classifiers on validation data; inspect the final test set only after pinning a configuration.
 3. **Investigate group outcomes** — compare carefully defined group metrics, denominators, and uncertainty.
 4. **Experiment** — explore threshold and mitigation trade-offs without presenting an experiment as a guaranteed fairness fix.
 5. **Review findings** — summarize methods, results, and limitations in a reproducible report.
 
 ## Repository structure
 
-    .
-    ├── app.py                  # Streamlit landing page
-    ├── pages/                  # Guided user journey
-    ├── src/fairlens/           # Data, models, metrics, splits
-    ├── scripts/                # Explicit data acquisition commands
-    ├── tests/                  # Automated checks
-    ├── docs/                   # Methodology, roadmap, principles, limitations
-    ├── data/                   # Local data only; not committed
-    ├── requirements.txt
-    └── pyproject.toml
+```
+.
+├── app.py                  # Streamlit home page
+├── pages/                  # 1 Data, 2 Evaluate, 3 Group outcomes, 4 Experiment lab, 5 Findings, 6 Methodology
+├── src/fairlens/           # config, data, splitting, models, metrics, evaluation, report, ui
+├── scripts/                # Explicit data acquisition
+├── tests/                  # Unit tests + Streamlit smoke tests
+├── docs/                   # Methodology, roadmap, handoff, submission guide
+└── data/                   # Local data only; not committed
+```
 
 ## Quick start
 
@@ -58,7 +58,7 @@ On Windows PowerShell, activate the environment with:
 
     .venv\Scripts\Activate.ps1
 
-The application does not silently download data or display fabricated performance numbers. To obtain the benchmark explicitly, run:
+The application never downloads data silently or shows placeholder numbers. Fetch the benchmark with the button on the first page, or run:
 
     python scripts/download_dataset.py
 
@@ -67,7 +67,7 @@ The downloaded file and manifest remain local and are excluded from Git. See dat
 ## Evaluation commitments
 
 - Use stratified training, validation, and final test sets; this is a static classification dataset, not a time-series forecasting task.
-- Select models and thresholds using validation data. Do not tune on the final test set.
+- Select models and thresholds using validation data. The final test set stays hidden until one deliberate review is pinned per app session; the Findings page uses that frozen snapshot.
 - Compare against the competition's simple baseline: predict every applicant as Good credit risk. Confirm target encoding from the original UCI source.
 - Report class-specific errors, especially the costlier error of predicting Good for an actually Bad case.
 - Report group denominators. Avoid conclusions from tiny groups.
@@ -75,7 +75,7 @@ The downloaded file and manifest remain local and are excluded from Git. See dat
 
 ## Current status
 
-This is a starter skeleton. It does not yet contain trained models, measured results, or a completed fairness audit. The first milestone is to reproduce the baseline and model evaluation, then add group metrics with careful interpretation.
+The application code includes baselines, Logistic Regression and Random Forest, the UCI cost matrix, an age-group audit with intervals and repeated-split sensitivity checks, a validation-only threshold lab, and a downloadable report. The core suite currently passes 33 tests; the Streamlit page smoke tests and real-data download still need verification in an environment with Streamlit and network access. See docs/HANDOFF.md for the verification record, and docs/SUBMISSION.md for the write-up and demo plan.
 
 ## Project licensing
 
