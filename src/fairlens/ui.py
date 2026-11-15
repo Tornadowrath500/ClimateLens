@@ -266,11 +266,14 @@ def group_rate_chart(metrics: pd.DataFrame, height: int = 300) -> go.Figure:
                 continue
             fig.add_trace(
                 go.Scatter(
-                    x=[rate], y=[f"{g} (n={int(r[den_col])})"], mode="markers+text",
+                    # Exact rates and intervals are available on hover. Leaving
+                    # labels out of the plot prevents the three narrow panels
+                    # from colliding when group rates are close together.
+                    x=[rate], y=[f"{g} (n={int(r[den_col])})"], mode="markers",
                     marker=dict(size=13, color=GROUP_COLOR.get(g, SAGE), symbol="diamond" if g == YOUNG else "circle"),
                     error_x=dict(type="data", symmetric=False, array=[hi - rate], arrayminus=[rate - lo],
                                  color=GROUP_COLOR.get(g, SAGE), thickness=2),
-                    text=[pct_text(rate)], textposition="top center", showlegend=False,
+                    showlegend=False,
                     hovertemplate=f"{g}<br>{int(r[num_col])} of {int(r[den_col])} = {pct_text(rate)}"
                                   f"<br>95% interval {pct_text(lo)} to {pct_text(hi)}<extra></extra>",
                 ),
