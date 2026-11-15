@@ -40,13 +40,18 @@ with m3:
 st.markdown(
     '<section class="fl-dashboard-callout"><div><span class="fl-eyebrow">YOUR FIRST 3 MINUTES</span>'
     '<h3>Start with the evidence. Leave with a careful claim.</h3>'
-    '<p>Understand the benchmark, inspect model errors, then compare group outcomes before exploring changes.</p></div>'
-    '<div class="fl-dashboard-actions"><a href="?page=Understand_the_Data">01&nbsp; Data</a>'
-    '<a href="?page=Evaluate_the_Model">02&nbsp; Performance</a>'
-    '<a href="?page=Investigate_Group_Outcomes">03&nbsp; Groups</a>'
-    '<a href="?page=Claim_Checker">04&nbsp; Claim check</a></div></section>',
+    '<p>Understand the benchmark, inspect model errors, then compare group outcomes before exploring changes.</p></div></section>',
     unsafe_allow_html=True,
 )
+quick = st.columns(4, gap="small")
+for col, path, label, icon in zip(
+    quick,
+    ["pages/1_Understand_the_Data.py", "pages/2_Evaluate_the_Model.py", "pages/3_Investigate_Group_Outcomes.py", "pages/15_Claim_Checker.py"],
+    ["01 · Data", "02 · Performance", "03 · Groups", "04 · Claim check"],
+    [":material/database:", ":material/monitoring:", ":material/groups:", ":material/rule:"],
+):
+    with col:
+        st.page_link(path, label=label, icon=icon)
 
 callout(
     "A research and learning tool",
