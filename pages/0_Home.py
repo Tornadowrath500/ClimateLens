@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import streamlit as st
 
-from fairlens.config import dataset_path
+from fairlens.config import dataset_path, TARGET_COLUMN
+from fairlens.data import load_dataset
 from fairlens.ui import callout, card, demo_active, demo_banner, header, setup_page
 
 
@@ -15,6 +16,35 @@ st.markdown(
     '<p>Explore a historic credit-risk model, compare its mistakes across groups, and see what changes when its inputs or decision rules change.</p>'
     '<div class="fl-hero-meta"><span>01 · DATA</span><span>02 · OUTCOMES</span><span>03 · TRADE-OFFS</span></div>'
     '</section>',
+    unsafe_allow_html=True,
+)
+
+if dataset_path().exists() and not demo_active():
+    snapshot = load_dataset()
+    records = len(snapshot)
+    features = snapshot.shape[1] - 1
+    source_label = "Historic UCI benchmark"
+elif demo_active():
+    records, features, source_label = 1000, 20, "Synthetic demo"
+else:
+    records, features, source_label = 0, 20, "Dataset not loaded"
+
+st.markdown('<div class="fl-section-kicker">AUDIT WORKSPACE / START HERE</div>', unsafe_allow_html=True)
+m1, m2, m3 = st.columns([1, 1, 2], gap="medium")
+with m1:
+    st.metric("Records in view", f"{records:,}" if records else "Not loaded")
+with m2:
+    st.metric("Input features", f"{features}")
+with m3:
+    st.metric("Evidence source", source_label, help="FairLens uses a historic credit benchmark or clearly labeled synthetic examples; it does not sync current applicant data.")
+st.markdown(
+    '<section class="fl-dashboard-callout"><div><span class="fl-eyebrow">YOUR FIRST 3 MINUTES</span>'
+    '<h3>Start with the evidence. Leave with a careful claim.</h3>'
+    '<p>Understand the benchmark, inspect model errors, then compare group outcomes before exploring changes.</p></div>'
+    '<div class="fl-dashboard-actions"><a href="?page=Understand_the_Data">01&nbsp; Data</a>'
+    '<a href="?page=Evaluate_the_Model">02&nbsp; Performance</a>'
+    '<a href="?page=Investigate_Group_Outcomes">03&nbsp; Groups</a>'
+    '<a href="?page=Claim_Checker">04&nbsp; Claim check</a></div></section>',
     unsafe_allow_html=True,
 )
 
