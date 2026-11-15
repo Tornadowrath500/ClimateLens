@@ -32,6 +32,12 @@ from fairlens.models import MODEL_NAMES
 INK, GREEN, SAGE, AMBER, MUTED, LINE = "#e6f1ff", "#42ddb3", "#82a9b2", "#f2b84b", "#9aacc2", "#263c54"
 YOUNG, OLD = group_labels(AGE_GROUP_CUTOFF)
 GROUP_COLOR = {YOUNG: AMBER, OLD: GREEN}
+PROFILE_ACCENTS = {
+    "Mint": ("#42ddb3", "#61c9ff"),
+    "Sky": ("#61c9ff", "#9b8cff"),
+    "Amber": ("#f2b84b", "#61c9ff"),
+    "Violet": ("#b39aff", "#61c9ff"),
+}
 
 METRIC_HELP = {
     "accuracy": "Share of all applicants the model labelled correctly. Misleading when errors cost different amounts.",
@@ -172,6 +178,12 @@ def setup_page(title: str) -> None:
     st.markdown(CSS, unsafe_allow_html=True)
     if st.session_state.get("fl_light_mode", False):
         st.markdown(LIGHT_MODE_CSS, unsafe_allow_html=True)
+    profile = st.session_state.get("fl_profile", {})
+    accent, secondary = PROFILE_ACCENTS.get(profile.get("accent", "Mint"), PROFILE_ACCENTS["Mint"])
+    st.markdown(
+        f"<style>:root{{--fl-mint:{accent};--fl-cyan:{secondary};}}</style>",
+        unsafe_allow_html=True,
+    )
 
 
 def theme_control() -> None:
