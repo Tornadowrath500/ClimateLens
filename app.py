@@ -34,6 +34,7 @@ navigation = st.navigation(
             st.Page("pages/4_Experiment_Lab.py", title="Experiment lab", icon=":material/science:"),
             st.Page("pages/10_Mitigation_Lab.py", title="Mitigation lab", icon=":material/compare_arrows:"),
             st.Page("pages/11_Audit_Your_Model.py", title="Audit your model", icon=":material/fact_check:"),
+            st.Page("pages/14_Health_Equity_Lab.py", title="Health equity lab", icon=":material/health_metrics:"),
         ],
     },
     position="sidebar",
