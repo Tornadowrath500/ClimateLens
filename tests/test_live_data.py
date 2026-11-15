@@ -10,7 +10,7 @@ def sample_payload():
         "hits": {"total": {"value": 14}},
         "aggregations": {
             "product": {
-                "field": {
+                "product": {
                     "buckets": [
                         {"key": "Credit card", "doc_count": 9},
                         {"key": "Checking account", "doc_count": 5},
@@ -37,6 +37,17 @@ def test_parse_complaint_summary_normalizes_and_sorts_counts():
     ]
     assert result["last_indexed"] == "2026-11-15T00:00:00Z"
     assert result["is_data_stale"] is False
+
+
+
+def test_parse_complaint_summary_accepts_published_schema_shape():
+    payload = sample_payload()
+    product = payload["aggregations"]["product"]
+    product["field"] = product.pop("product")
+
+    result = parse_complaint_summary(payload)
+
+    assert result["products"][0] == {"product": "Credit card", "count": 9}
 
 
 def test_parse_complaint_summary_rejects_missing_aggregates():
