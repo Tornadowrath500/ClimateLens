@@ -4,10 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import json
-import os
-
-import requests
-
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -444,46 +440,60 @@ h1 { background: linear-gradient(95deg, var(--fl-ink) 55%, var(--fl-cyan)); -web
 """
 
 
-def audit_guide() -> None:
-    with st.popover("Ask the Audit Guide", icon=":material/forum:"):
-        st.caption("Ask about FairLens metrics, evidence, limitations, or next review steps. AI answers are not financial, legal, or medical advice. Do not enter personal, applicant, patient, or account data. Submitted questions go to OpenAI; request storage is disabled.")
-        history = st.session_state.setdefault("fl_guide_history", [])
-        for item in history[-6:]:
-            with st.chat_message(item["role"]): st.write(item["content"])
-        with st.form("fl_audit_guide_form", clear_on_submit=True):
-            question = st.text_input("Question")
-            submitted = st.form_submit_button("Ask", type="primary")
-        if submitted and question.strip():
-            answer = _audit_guide_reply(question.strip(), history)
-            history.extend([{"role":"user","content":question.strip()[:1000]}, {"role":"assistant","content":answer}])
-            st.rerun()
+GUIDE_HTML = '<div id="fairlens-guide"></div>'
+GUIDE_CSS = r"""
+#fairlens-guide{--bg:var(--st-background-color,#081421);--panel:var(--st-secondary-background-color,#102033);--fg:var(--st-text-color,#e6f1ff);--muted:color-mix(in srgb,var(--fg) 68%,transparent);--line:color-mix(in srgb,var(--fg) 18%,transparent);color:var(--fg);font:14px/1.5 var(--st-font,system-ui,sans-serif)}
+#fairlens-guide *{box-sizing:border-box} #fairlens-guide button{font:inherit;cursor:pointer}
+#fairlens-guide .launch{position:fixed;z-index:99998;right:22px;bottom:22px;border:1px solid #42ddb388;color:#07151c;background:linear-gradient(135deg,#42ddb3,#61c9ff);padding:12px 18px;border-radius:999px;font-weight:750;box-shadow:0 8px 32px #0005,0 0 26px #42ddb32e}
+#fairlens-guide .panel{position:fixed;z-index:99999;right:22px;bottom:78px;width:min(390px,calc(100vw - 28px));max-height:min(650px,calc(100vh - 110px));overflow:hidden;display:none;flex-direction:column;border:1px solid var(--line);border-radius:20px;background:var(--bg);box-shadow:0 24px 90px #0007,0 0 36px #42ddb31a}
+#fairlens-guide .panel.open{display:flex;animation:rise .2s ease-out}@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+#fairlens-guide .head{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)} #fairlens-guide .orb{width:10px;height:10px;border-radius:50%;background:#42ddb3;box-shadow:0 0 14px #42ddb3} #fairlens-guide .title{flex:1;font-weight:750} #fairlens-guide small,#fairlens-guide .small{display:block;color:var(--muted);font-size:11px}
+#fairlens-guide .notice{padding:10px 14px;color:var(--muted);background:var(--panel);font-size:12px;border-bottom:1px solid var(--line)}
+#fairlens-guide .body{overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:140px;max-height:390px}
+#fairlens-guide .msg{max-width:94%;padding:10px 12px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere} #fairlens-guide .assistant{align-self:flex-start;background:var(--panel);border:1px solid var(--line)} #fairlens-guide .user{align-self:flex-end;color:#07151c;background:linear-gradient(135deg,#42ddb3,#9be9d4)}
+#fairlens-guide .actions{display:flex;gap:8px;padding:0 14px 12px;flex-wrap:wrap} #fairlens-guide .soft{border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;padding:7px 10px;font-size:12px}
+#fairlens-guide .download{width:100%;border:0;color:#06131b;background:linear-gradient(135deg,#42ddb3,#61c9ff);border-radius:11px;padding:11px;font-weight:750}
+#fairlens-guide .input{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line)} #fairlens-guide textarea{flex:1;min-width:0;resize:vertical;min-height:42px;max-height:100px;border:1px solid var(--line);border-radius:11px;color:var(--fg);background:var(--panel);padding:10px;font:inherit} #fairlens-guide .send{border:0;border-radius:11px;padding:0 13px;background:#42ddb3;color:#06131b;font-weight:750}
+#fairlens-guide .small{padding:0 14px 10px} #fairlens-guide .sound{position:fixed;z-index:99998;right:24px;bottom:78px;font-size:11px;border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:999px;padding:5px 9px}
+@media(max-width:500px){#fairlens-guide .launch{right:14px;bottom:14px}#fairlens-guide .panel{right:10px;bottom:72px}#fairlens-guide .sound{right:16px;bottom:66px}}
+"""
+GUIDE_JS = r"""
+export default function({parentElement,data}){
+ const root=parentElement.querySelector("#fairlens-guide");if(!root||root.dataset.ready)return;root.dataset.ready="1";
+ root.innerHTML='<button class="launch" aria-expanded="false">✦ Ask FairLens</button><button class="sound" aria-pressed="false">Sound off</button><section class="panel" aria-label="FairLens Guide"><div class="head"><span class="orb"></span><div class="title">FairLens Guide<small>On-device learning assistant</small></div><button class="soft close" aria-label="Close">✕</button></div><div class="notice">Educational guidance only. Outputs can be wrong and are not financial, lending, health, or legal advice. Never enter personal or applicant data.</div><div class="body" aria-live="polite"></div><div class="actions"><button class="soft next">✧ Suggest next steps</button><button class="soft clear">Clear chat</button></div><div class="input"><textarea aria-label="Ask a question" placeholder="Ask about a FairLens metric or method…"></textarea><button class="send">Send</button></div><div class="small status">AI is optional. The model downloads only after you choose below.</div><div class="small">Questions stay in this browser. The initial model download comes from Hugging Face.</div></section>';
+ const panel=root.querySelector(".panel"),body=root.querySelector(".body"),input=root.querySelector("textarea"),status=root.querySelector(".status"),ctx=data||{};let model=null,busy=false;const history=[];
+ const system="You are FairLens Guide. Answer only about FairLens, model evaluation, aggregate fairness metrics, methods, evidence, limitations, and non-decision audit steps. Never give personal financial, credit, lending, medical, legal, or investment advice or real eligibility recommendations. A group gap alone proves neither unfairness nor cause. Explain uncertainty and denominators. Politely decline anything out of scope. Be concise. Context: "+JSON.stringify(ctx);
+ function add(role,t){let d=document.createElement("div");d.className="msg "+role;d.textContent=t;body.append(d);body.scrollTop=body.scrollHeight}
+ function beep(f=560,d=.04){if(localStorage.getItem("fl_sounds")!=="1")return;try{let C=AudioContext||webkitAudioContext,c=window.__flAudio||(window.__flAudio=new C),o=c.createOscillator(),g=c.createGain();if(c.state==="suspended")c.resume();o.frequency.value=f;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.016,c.currentTime+.008);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+d);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d+.01)}catch(e){}}
+ const snd=root.querySelector(".sound");function sync(){let on=localStorage.getItem("fl_sounds")==="1";snd.textContent=on?"Sound on":"Sound off";snd.setAttribute("aria-pressed",String(on))}sync();
+ snd.onclick=()=>{let on=localStorage.getItem("fl_sounds")==="1";localStorage.setItem("fl_sounds",on?"0":"1");sync();if(!on)beep(740,.07)};
+ async function load(){if(model||busy)return;if(!navigator.gpu){status.textContent="WebGPU is unavailable. Try current Chrome or Edge on a compatible device.";return}busy=true;status.textContent="Loading library and downloading the local model. This may be a large one-time download; keep this tab open.";try{let m=await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1");model=await m.pipeline("text-generation","onnx-community/Qwen2.5-0.5B-Instruct",{device:"webgpu",dtype:"q4"});status.textContent="Ready. The model runs on this device; no API key is used."}catch(e){status.textContent="Could not load the model. Check connection, WebGPU support, and available memory, then retry.";model=null}finally{busy=false}}
+ root.querySelector(".launch").onclick=()=>{panel.classList.toggle("open");root.querySelector(".launch").setAttribute("aria-expanded",String(panel.classList.contains("open")));if(panel.classList.contains("open")&&!body.children.length){add("assistant","Hi! I can explain FairLens evidence, metrics, methods, and limitations.");let b=document.createElement("button");b.className="download";b.textContent="Download local model & enable";b.onclick=load;body.append(b)}beep(620)};
+ root.querySelector(".close").onclick=()=>{panel.classList.remove("open");beep(430)};
+ async function ask(q){if(!q.trim()||busy)return;add("user",q);input.value="";if(/my loan|my credit|should i (borrow|invest|buy|sell)|approve me|my application|diagnos(e|is) me|legal advice/i.test(q)){add("assistant","I can’t advise on an individual financial, credit, health, or legal decision. I can explain FairLens methods or evidence to review.");return}if(!model){add("assistant","Enable Q&A by choosing “Download local model & enable.” The next-steps checklist works without AI.");return}busy=true;status.textContent="Thinking on this device…";try{let r=await model([{role:"system",content:system},...history.slice(-6),{role:"user",content:q.slice(0,1000)}],{max_new_tokens:180,do_sample:false}),v=r?.[0]?.generated_text,t=Array.isArray(v)?v.at(-1)?.content:v;if(typeof t!=="string"||!t.trim())t="I don’t have enough grounded context. Check the source data and method notes.";history.push({role:"user",content:q.slice(0,1000)},{role:"assistant",content:t});add("assistant",t);beep(760,.07)}catch(e){add("assistant","I couldn’t answer that. Try a shorter question or check the selected metrics.")}finally{busy=false;status.textContent="Ready. Responses run locally and may be wrong."}}
+ root.querySelector(".send").onclick=()=>ask(input.value);input.onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();ask(input.value)}};
+ root.querySelector(".next").onclick=()=>{add("assistant","A careful review path for "+(ctx.page||"this view")+":\n1. Confirm the data source, time period, target, and sample size.\n2. Compare group outcome and error rates with denominators and uncertainty.\n3. Stress-test another threshold or model and document trade-offs.\n4. State what the evidence cannot establish.\n\nThese are audit steps, not financial or lending advice.");beep(700,.07)};
+ root.querySelector(".clear").onclick=()=>{body.replaceChildren();history.length=0;status.textContent="Conversation cleared.";beep(480)};
+ if(!window.__flSoundListener){window.__flSoundListener=true;document.addEventListener("click",e=>{if(localStorage.getItem("fl_sounds")!=="1")return;let x=e.target.closest("button,[role=tab],a,[role=switch]");if(x&&!x.closest("#fairlens-guide"))beep(520,.03)},{passive:true})}
+}
+"""
+GUIDE_COMPONENT = st.components.v2.component("fairlens_local_guide",html=GUIDE_HTML,css=GUIDE_CSS,js=GUIDE_JS,isolate_styles=True)
 
-def _audit_guide_reply(question: str, history: list[dict[str, str]]) -> str:
-    key = os.getenv("OPENAI_API_KEY")
-    if not key:
-        try: key = st.secrets.get("OPENAI_API_KEY")
-        except Exception: key = None
-    if not key: return "AI is not enabled. Add OPENAI_API_KEY in Streamlit Cloud app Secrets."
-    q = question.lower()
-    if any(term in q for term in ("my loan", "my credit", "should i borrow", "should i invest", "approve me", "will i be approved", "my application", "diagnose me")):
-        return "I can’t advise on individual financial, credit, or health decisions. I can explain FairLens methods or suggest evidence to review."
-    context = {"page":st.session_state.get("fl_current_page","FairLens"), "mode":"synthetic demo" if st.session_state.get("use_demo_data") else "historical benchmark", "scope":"Educational only; credit benchmark is from 1994 and not current applicants."}
+def audit_guide() -> None:
     review = st.session_state.get("final_test_review")
+    context = {"page": st.session_state.get("fl_current_page", "FairLens"),
+               "mode": "synthetic demo" if st.session_state.get("use_demo_data") else "historical benchmark",
+               "scope": "Educational only; German Credit benchmark donated in 1994, not current applicants."}
     if isinstance(review, dict):
-        f = review.get("findings", {}); t = f.get("test", {}) if isinstance(f, dict) else {}
-        context["pinned_review"] = {"model":review.get("model"), "decision_rule":review.get("decision_rule"), "test_n":f.get("n_test") if isinstance(f,dict) else None, "metrics":{k:t[k] for k in ("accuracy","recall_other","cost_per_applicant") if isinstance(t,dict) and isinstance(t.get(k),(int,float))}}
-    instructions = "You are FairLens Audit Guide. Explain only app methods, metrics, aggregate results, limitations, or non-decision review steps. Never recommend financial actions, lending decisions, healthcare actions, or legal conclusions. Gaps do not prove fairness, bias, discrimination, or cause. Data are historical; health simulation is synthetic. If context is insufficient, say so. Be concise. Aggregate context: " + json.dumps(context, default=str)[:3000]
-    payload = {"model":os.getenv("FAIRLENS_AI_MODEL","gpt-4.1-mini"), "store":False, "max_output_tokens":350, "instructions":instructions, "input":history[-6:]+[{"role":"user","content":question[:1000]}]}
-    try:
-        response = requests.post("https://api.openai.com/v1/responses", headers={"Authorization":"Bearer "+key,"Content-Type":"application/json"}, json=payload, timeout=25)
-        response.raise_for_status(); return response.json().get("output_text", "").strip() or "I don’t have enough grounded context to answer that."
-    except requests.RequestException: return "The AI service is unavailable. Try later; no audit result was changed."
-    except (ValueError, TypeError): return "The AI returned an unreadable response. Try again later."
+        findings = review.get("findings", {})
+        test = findings.get("test", {}) if isinstance(findings, dict) else {}
+        context["pinned_review"] = {"model": review.get("model"), "test_n": findings.get("n_test") if isinstance(findings, dict) else None,
+            "metrics": {k: test[k] for k in ("accuracy", "recall_other", "cost_per_applicant") if isinstance(test, dict) and isinstance(test.get(k), (int, float))}}
+    GUIDE_COMPONENT(data=context,key="fairlens_local_guide")
 
 def setup_page(title: str) -> None:
     """Inject shared skin and the bounded Audit Guide on every page."""
     st.session_state["fl_current_page"] = title
-    audit_guide()
     st.markdown(CSS, unsafe_allow_html=True)
     if st.session_state.get("fl_light_mode", False):
         st.markdown(LIGHT_MODE_CSS, unsafe_allow_html=True)
