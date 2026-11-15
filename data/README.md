@@ -1,15 +1,11 @@
-# Local data directory
+# Bundled benchmark data
 
-The raw benchmark is deliberately not committed to Git.
+The app includes raw/german_credit.csv, a copy of the UCI Statlog (German Credit Data) benchmark, and raw/dataset_manifest.json with its source, attribution, license, retrieval time, target encoding, and row/feature counts. New users can open the app without downloading data or needing network access.
 
-Run from the repository root:
+The benchmark is shared under the UCI dataset's CC BY 4.0 license. See [the dataset page](https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data) and [project data and ethics notes](../docs/DATA_AND_ETHICS.md).
+
+The acquisition script remains available to refresh a local copy:
 
     python scripts/download_dataset.py
 
-This writes:
-- raw/german_credit.csv
-- raw/dataset_manifest.json
-
-Both are ignored by Git. The manifest records the dataset source, attribution, retrieval time, target encoding, and row/feature counts.
-
-Do not place real applicant records, private information, credentials, or unrelated datasets here. Review the UCI CC BY 4.0 terms before redistributing derived material.
+Do not add private, applicant-supplied, or otherwise restricted records to this directory or Git.

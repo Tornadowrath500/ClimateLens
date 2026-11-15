@@ -20,7 +20,7 @@ st.markdown(
 
 callout(
     "A research and learning tool",
-    "FairLens audits an educational benchmark. It is not designed for real lending decisions. A difference between groups is a signal to investigate, not proof of discrimination or its cause.",
+    "The public UCI benchmark is bundled and ready to explore; no data download is needed. FairLens is an educational tool, not designed for real lending decisions. Group differences are a signal to investigate, not proof of discrimination or its cause.",
     "note",
 )
 

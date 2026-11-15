@@ -9,6 +9,8 @@ htmlcov/
 Thumbs.db
 data/raw/*
 !data/raw/.gitkeep
+!data/raw/german_credit.csv
+!data/raw/dataset_manifest.json
 data/processed/*
 !data/processed/.gitkeep
 artifacts/

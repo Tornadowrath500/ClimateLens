@@ -18,6 +18,7 @@ UCI describes 1,000 instances and 20 features. The target is class, with 1 = Goo
 - The benchmark does not represent current lending practices, regulations, applicants, or economic conditions.
 - Features and group labels are historical and may encode social assumptions of their time.
 - The sample is small. Some group or intersectional comparisons may have very small denominators.
+- UCI's South German Credit update reports severe coding-information errors in the Statlog version and adds background/corrections. This app retains the original Statlog version for its current workflow; treat code-level interpretations cautiously.
 - The source labels are not a guarantee of a real applicant's future repayment behavior.
 - An association between a feature and a prediction is not proof of causation.
 - Unequal group metrics can motivate investigation; they do not independently establish discrimination or legal noncompliance.
@@ -33,8 +34,9 @@ The dataset's age field is Attribute13. The initial exploratory grouping is unde
 
 ## Data handling
 
-- Download data only by explicitly running python scripts/download_dataset.py.
-- Keep the downloaded CSV and manifest local; data/raw/ is ignored by Git.
+- The public UCI benchmark is bundled with the app under CC BY 4.0 so the app works without a separate download. Its source, citation, license, and target encoding are recorded in data/raw/dataset_manifest.json.
+- python scripts/download_dataset.py can refresh a local copy of the same public benchmark.
+- Never commit private, user-supplied, or restricted applicant-level data.
 - Do not upload applicant-level rows, private data, or credentials to GitHub.
 - If derived data are ever shared, re-check the source license and include attribution.
 
