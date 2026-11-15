@@ -87,8 +87,10 @@ The Streamlit Community Cloud app should be configured to use this repository, b
 
 ## Local AI Audit Guide
 
-The bottom-right FairLens chat offers page-specific starter questions on methods, metric meanings, aggregate results, uncertainty, and audit follow-up. It is deliberately limited: it refuses personal financial, lending, health, legal, investment, and individual eligibility advice. A visible disclaimer reminds visitors that responses can be wrong and are not financial advice.
+The bottom-right FairLens chat offers page-specific starter questions about methods, metrics, aggregate results, uncertainty, and audit follow-up. It refuses personal financial, lending, health, legal, investment, and individual eligibility advice. Answers are educational and may be wrong; they are not financial advice.
 
-The local WebGPU model is optional. Its library and model weights are fetched only after a visitor opens the chat and clicks **Download local AI to enable Q&A**. The first download can take several minutes. The guide shows actual file transfer progress when the browser library provides it, and streams generated replies as they arrive; it uses an indeterminate status while WebGPU is preparing or generating. Questions stay in the browser tab. The app supplies only the current page and an allow-listed aggregate summary of the pinned review, never applicant rows or uploaded records.
+The local WebGPU model is optional. Its library and model files are first fetched only after a visitor clicks **Download local AI to enable Q&A**. That opt-in is remembered in this browser, so other app tabs can initialize their own local runtime from cached files. The initial download may take several minutes; the chat shows actual transfer progress when available and streams replies as they are generated. If browser storage is cleared, model files may need to be fetched again. Questions and chat history are stored only in this browser, not sent to the app server. **Clear chat** removes saved history across the open tabs. The app gives the model only the current page and an allow-listed aggregate pinned-review summary, never applicant rows or uploaded records.
 
-Sound effects are synthesized in the browser, on by default after the app loads, and can be muted with the speaker icon beside **Light mode**. Unsupported WebGPU browsers still have the built-in audit next-steps checklist. The guide may be wrong; check important interpretations against displayed data, method notes, and cited sources.
+A search bar at the top of each page finds and highlights matching terms on the page currently open, with controls to move between matches. The app has no sound effects.
+
+Verify important interpretations against the displayed data, method notes, and cited sources.
