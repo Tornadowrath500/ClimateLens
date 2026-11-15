@@ -9,6 +9,12 @@ import streamlit as st
 from fairlens.live_data import CFPB_SOURCE_URL, fetch_complaint_summary
 from fairlens.ui import callout, header, setup_page, style
 
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def cached_complaint_summary(start: date, end_exclusive: date) -> dict:
+    return fetch_complaint_summary(start, end_exclusive)
+
+
 setup_page("Live consumer signals")
 header(
     "Live consumer signals",
@@ -33,14 +39,14 @@ start_date = today - timedelta(days=range_days - 1)
 end_date_exclusive = today + timedelta(days=1)
 
 if st.button("Refresh now", icon=":material/refresh:", help="Clear the one-hour cache and request the CFPB again."):
-    fetch_complaint_summary.clear()
+    cached_complaint_summary.clear()
     st.rerun()
 
 st.caption(f"Received {start_date:%b %d, %Y} through {today:%b %d, %Y} · Updates at the source are generally daily; FairLens caches results for up to one hour.")
 
 try:
     with st.spinner("Loading aggregated complaint data from the CFPB…"):
-        summary = fetch_complaint_summary(start_date, end_date_exclusive)
+        summary = cached_complaint_summary(start_date, end_date_exclusive)
 except Exception as exc:
     st.error("The live CFPB feed could not be loaded right now.")
     st.caption("Check your connection or try Refresh now. FairLens does not substitute sample or invented counts.")
