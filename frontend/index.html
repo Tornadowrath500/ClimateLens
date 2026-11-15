@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FairLens</title>
+  <meta name="description" content="Understand the decisions behind the model. An educational model-auditing prototype.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Optional web fonts. The app falls back to system fonts offline (see --font-* in styles.css). -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script src="config.js"></script>
+  <script>/* Apply the saved theme before first paint to avoid a flash. */
+    try { var s = JSON.parse(localStorage.getItem("fairlens.settings") || "{}"); if (s.theme) document.documentElement.dataset.theme = s.theme; } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="app" class="app-shell">
+    <aside id="sidebar" class="sidebar" aria-label="Primary"></aside>
+    <div class="scrim" id="scrim" hidden></div>
+    <main id="main" class="main" tabindex="-1"></main>
+  </div>
+  <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+  <noscript><p style="padding:2rem">FairLens needs JavaScript. It talks to a Python backend; see README.md.</p></noscript>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
