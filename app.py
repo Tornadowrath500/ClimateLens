@@ -42,6 +42,7 @@ navigation = st.navigation(
             st.Page("pages/14_Health_Equity_Lab.py", title="Health lab (synthetic)", icon=":material/health_metrics:"),
         ],
         "LIVE CONTEXT": [
+            st.Page("pages/19_Mortgage_Application_Outcomes.py", title="Mortgage application outcomes", icon=":material/real_estate_agent:"),
             st.Page("pages/18_Live_Consumer_Signals.py", title="Live consumer signals", icon=":material/update:"),
         ],
     },
