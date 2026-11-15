@@ -295,7 +295,7 @@ ROUTE = [  # (label, page titles that complete the step)
     ("Findings and limits", {"Findings and report", "Methodology and limitations", "Claim checker"}, "pages/5_Findings_and_Report.py"),
 ]
 _SYNTHETIC_PAGES = {"Health equity lab"}
-_NO_RIBBON = {"Over-claim game", "Claim checker", "Home", "Session profile", "Your first FairLens tour", "Methodology and limitations"}
+_NO_RIBBON = {"Over-claim game", "Claim checker", "Home", "Session profile", "Your first FairLens tour", "Methodology and limitations", "Live consumer signals", "Mortgage application outcomes"}
 
 
 JUMP = [
@@ -307,6 +307,7 @@ JUMP = [
     ("Applicant simulator", "pages/8_Applicant_Simulator.py"), ("Proxy detector", "pages/9_Proxy_Detector.py"),
     ("Experiment lab", "pages/4_Experiment_Lab.py"), ("Mitigation lab", "pages/10_Mitigation_Lab.py"),
     ("Audit your model", "pages/11_Audit_Your_Model.py"), ("Health lab (synthetic)", "pages/14_Health_Equity_Lab.py"),
+    ("Mortgage application outcomes", "pages/19_Mortgage_Application_Outcomes.py"),
     ("Live consumer signals", "pages/18_Live_Consumer_Signals.py"),
 ]
 
@@ -338,6 +339,7 @@ PAGE_META = {  # setup_page title -> (nav group, short label) for the top breadc
     "Mitigation lab": ("EXPLORE", "Mitigation lab"), "Audit your own model": ("EXPLORE", "Your model"),
     "Health equity lab": ("EXPLORE", "Health lab · synthetic"),
     "Live consumer signals": ("LIVE", "Consumer signals"),
+    "Mortgage application outcomes": ("LIVE", "Mortgage outcomes"),
 }
 
 
@@ -356,7 +358,8 @@ def _track_route(title: str) -> None:
     else:
         chip = '<span class="fl-chip">HISTORICAL BENCHMARK</span>UCI German Credit (1994). Educational only; not today\'s applicants or lenders.'
     done = [bool(pages & visited) for _, pages, _ in ROUTE]
-    nxt = next(((label, path) for (label, _, path), d in zip(ROUTE, done) if not d), None)
+    outside_audit_route = title in {"Live consumer signals", "Mortgage application outcomes"}
+    nxt = None if outside_audit_route else next(((label, path) for (label, _, path), d in zip(ROUTE, done) if not d), None)
     meta = PAGE_META.get(title)
     if meta:
         left, right = st.columns([3, 2], vertical_alignment="center")
@@ -378,13 +381,14 @@ def _track_route(title: str) -> None:
     pct = 100 * sum(done) // len(ROUTE)
     with st.sidebar:
         _jump_box()
-        st.markdown(
-            f'<div class="fl-route" role="group" aria-label="Audit route progress"><b>AUDIT ROUTE · {sum(done)}/{len(ROUTE)}</b>'
-            f'<div class="fl-route-track"><i style="width:{pct}%"></i></div><ol>{items}</ol></div>',
-            unsafe_allow_html=True,
-        )
-        if not nxt:
-            st.caption("Route complete. Try the Claim checker or the Health lab next.")
+        if not outside_audit_route:
+            st.markdown(
+                f'<div class="fl-route" role="group" aria-label="Audit route progress"><b>AUDIT ROUTE · {sum(done)}/{len(ROUTE)}</b>'
+                f'<div class="fl-route-track"><i style="width:{pct}%"></i></div><ol>{items}</ol></div>',
+                unsafe_allow_html=True,
+            )
+            if not nxt:
+                st.caption("Route complete. Try the Claim checker or the Health lab next.")
 
 
 FUTURE_CSS = """
@@ -646,9 +650,10 @@ def audit_guide() -> None:
             "synthetic_health_lab": "The health equity lab uses invented records to illustrate assumptions and metrics. It is not patient data, a clinical audit, or evidence about real screening systems.",
             "limits": "The benchmark is old, small, specific to its historical context, and has coding/documentation limitations. Do not generalize its results to current applicants or institutions.",
             "live_consumer_signals": "A separate page shows aggregate U.S. CFPB complaint counts for a selected recent period. The CFPB generally updates its database daily and FairLens caches for up to one hour. Complaints are not a representative sample, verified wrongdoing, lending outcomes, or evidence of fairness. The chat is not given live feed counts.",
+            "hmda_application_outcomes": "The Mortgage application outcomes page queries grouped aggregate counts from the CFPB/FFIEC HMDA Data Browser for reported mortgage actions 1 through 5, grouped by reported race, ethnicity, or sex, with a nationwide or state filter. Action 1 is originated; 2 approved but not accepted; 3 denied; 4 withdrawn; 5 closed for incompleteness. The displayed denied share is the count with action 3 divided by counts with actions 1 through 5; it is unadjusted and descriptive. The current 2025 Data Browser uses a snapshot frozen June 2, 2026. HMDA covers only reportable mortgage activity, public records are modified to protect privacy, and these aggregates do not include full underwriting criteria or prove discrimination, causation, or model performance.",
             "metric_definitions": METRIC_HELP,
         },
-        "available_live_evidence": "The assistant receives the page title and only an explicitly pinned final-test summary. It does not receive the page's charts, unpinned metrics, raw applicant rows, uploaded files, or personal records. Never invent a current metric or claim to have inspected evidence that is not included here.",
+        "available_live_evidence": "The assistant receives the page title and only an explicitly pinned final-test summary. It does not receive live HMDA or CFPB API results, the page's charts, unpinned metrics, raw applicant rows, uploaded files, or personal records. Never invent a current metric or claim to have inspected evidence that is not included here.",
         "answer_rule": "Answer only from the verified reference and available live evidence. If a requested fact or value is absent, say it is not provided to the chat and direct the visitor to the relevant page/chart. Never invent organizations, model origins, results, dates, causes, or recommendations.",
     }
     if isinstance(review, dict):
