@@ -307,6 +307,7 @@ JUMP = [
     ("Applicant simulator", "pages/8_Applicant_Simulator.py"), ("Proxy detector", "pages/9_Proxy_Detector.py"),
     ("Experiment lab", "pages/4_Experiment_Lab.py"), ("Mitigation lab", "pages/10_Mitigation_Lab.py"),
     ("Audit your model", "pages/11_Audit_Your_Model.py"), ("Health lab (synthetic)", "pages/14_Health_Equity_Lab.py"),
+    ("Live consumer signals", "pages/18_Live_Consumer_Signals.py"),
 ]
 
 
@@ -336,6 +337,7 @@ PAGE_META = {  # setup_page title -> (nav group, short label) for the top breadc
     "Proxy detector": ("EXPLORE", "Proxy detector"), "Experiment lab": ("EXPLORE", "Experiment lab"),
     "Mitigation lab": ("EXPLORE", "Mitigation lab"), "Audit your own model": ("EXPLORE", "Your model"),
     "Health equity lab": ("EXPLORE", "Health lab · synthetic"),
+    "Live consumer signals": ("LIVE", "Consumer signals"),
 }
 
 
