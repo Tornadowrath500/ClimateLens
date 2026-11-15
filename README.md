@@ -91,6 +91,6 @@ The bottom-right FairLens chat offers page-specific starter questions about meth
 
 The local WebGPU model is optional. Its library and model files are first fetched only after a visitor clicks **Download local AI to enable Q&A**. That opt-in is remembered in this browser, so other app tabs can initialize their own local runtime from cached files. The initial download may take several minutes; the chat shows actual transfer progress when available and streams replies as they are generated. If browser storage is cleared, model files may need to be fetched again. Questions and chat history are stored only in this browser, not sent to the app server. **Clear chat** removes saved history across the open tabs. The app gives the model only the current page and an allow-listed aggregate pinned-review summary, never applicant rows or uploaded records.
 
-A search bar at the top of each page finds and highlights matching terms on the page currently open, with controls to move between matches. The app has no sound effects.
+A single search bar sits just below Streamlit’s top toolbar on every page. It finds and highlights matching terms on the page currently open, with controls to move between matches. The app has no sound effects.
 
 Verify important interpretations against the displayed data, method notes, and cited sources.
