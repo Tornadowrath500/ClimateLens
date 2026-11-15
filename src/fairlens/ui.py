@@ -362,7 +362,13 @@ def _track_route(title: str) -> None:
             unsafe_allow_html=True,
         )
         if nxt:
-            right.page_link(nxt[1], label=f"Next in the route: {nxt[0]}", icon=":material/arrow_forward:")
+            # AppTest can render a page module outside the registered multipage app.
+            # In that isolated context, keep route guidance visible without asking
+            # Streamlit to resolve a page that is not registered in the test runner.
+            try:
+                right.page_link(nxt[1], label=f"Next in the route: {nxt[0]}", icon=":material/arrow_forward:")
+            except st.errors.StreamlitAPIException:
+                right.caption(f"Next in the route: {nxt[0]}")
     if chip:
         st.markdown(f'<div class="fl-scope">{chip}</div>', unsafe_allow_html=True)
     items = "".join(f'<li class="{"done" if d else ""}">{label}</li>' for (label, _, _), d in zip(ROUTE, done))
