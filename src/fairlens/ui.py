@@ -295,7 +295,7 @@ ROUTE = [  # (label, page titles that complete the step)
     ("Findings and limits", {"Findings and report", "Methodology and limitations", "Claim checker"}, "pages/5_Findings_and_Report.py"),
 ]
 _SYNTHETIC_PAGES = {"Health equity lab"}
-_NO_RIBBON = {"Over-claim game", "Claim checker", "Home", "Session profile", "Your first FairLens tour", "Methodology and limitations"}
+_NO_RIBBON = {"Over-claim game", "Claim checker", "Home", "Session profile", "Your first FairLens tour", "Methodology and limitations", "Live consumer signals", "Mortgage application outcomes"}
 
 
 JUMP = [
@@ -307,6 +307,7 @@ JUMP = [
     ("Applicant simulator", "pages/8_Applicant_Simulator.py"), ("Proxy detector", "pages/9_Proxy_Detector.py"),
     ("Experiment lab", "pages/4_Experiment_Lab.py"), ("Mitigation lab", "pages/10_Mitigation_Lab.py"),
     ("Audit your model", "pages/11_Audit_Your_Model.py"), ("Health lab (synthetic)", "pages/14_Health_Equity_Lab.py"),
+    ("Mortgage application outcomes", "pages/19_Mortgage_Application_Outcomes.py"),
     ("Live consumer signals", "pages/18_Live_Consumer_Signals.py"),
 ]
 
@@ -338,6 +339,7 @@ PAGE_META = {  # setup_page title -> (nav group, short label) for the top breadc
     "Mitigation lab": ("EXPLORE", "Mitigation lab"), "Audit your own model": ("EXPLORE", "Your model"),
     "Health equity lab": ("EXPLORE", "Health lab · synthetic"),
     "Live consumer signals": ("LIVE", "Consumer signals"),
+    "Mortgage application outcomes": ("LIVE", "Mortgage outcomes"),
 }
 
 
@@ -356,7 +358,8 @@ def _track_route(title: str) -> None:
     else:
         chip = '<span class="fl-chip">HISTORICAL BENCHMARK</span>UCI German Credit (1994). Educational only; not today\'s applicants or lenders.'
     done = [bool(pages & visited) for _, pages, _ in ROUTE]
-    nxt = next(((label, path) for (label, _, path), d in zip(ROUTE, done) if not d), None)
+    outside_audit_route = title in {"Live consumer signals", "Mortgage application outcomes"}
+    nxt = None if outside_audit_route else next(((label, path) for (label, _, path), d in zip(ROUTE, done) if not d), None)
     meta = PAGE_META.get(title)
     if meta:
         left, right = st.columns([3, 2], vertical_alignment="center")
@@ -378,13 +381,14 @@ def _track_route(title: str) -> None:
     pct = 100 * sum(done) // len(ROUTE)
     with st.sidebar:
         _jump_box()
-        st.markdown(
-            f'<div class="fl-route" role="group" aria-label="Audit route progress"><b>AUDIT ROUTE · {sum(done)}/{len(ROUTE)}</b>'
-            f'<div class="fl-route-track"><i style="width:{pct}%"></i></div><ol>{items}</ol></div>',
-            unsafe_allow_html=True,
-        )
-        if not nxt:
-            st.caption("Route complete. Try the Claim checker or the Health lab next.")
+        if not outside_audit_route:
+            st.markdown(
+                f'<div class="fl-route" role="group" aria-label="Audit route progress"><b>AUDIT ROUTE · {sum(done)}/{len(ROUTE)}</b>'
+                f'<div class="fl-route-track"><i style="width:{pct}%"></i></div><ol>{items}</ol></div>',
+                unsafe_allow_html=True,
+            )
+            if not nxt:
+                st.caption("Route complete. Try the Claim checker or the Health lab next.")
 
 
 FUTURE_CSS = """
