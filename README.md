@@ -54,8 +54,15 @@ New core modules (all unit-tested, no Streamlit imports): `applicant.py`, `mapvi
 ├── scripts/                # Explicit data acquisition
 ├── tests/                  # Unit tests + Streamlit smoke tests
 ├── docs/                   # Methodology, roadmap, handoff, submission guide
+├── backend/                # FastAPI routes, schemas, state, and service adapters
+├── frontend/               # Independent HTML, CSS, and JavaScript client
 └── data/                   # Local data only; not committed
 ```
+
+The original Streamlit application is retained while the API-backed web client
+is developed. The backend adapters reuse the existing `src/fairlens/` model,
+metrics, data, and reporting modules. The new frontend communicates through
+`frontend/api.js`; see [docs/API.md](docs/API.md) for the HTTP contract.
 
 ## Quick start
 
@@ -68,6 +75,13 @@ Python 3.11 or newer is recommended.
     pip install -e .
     python -m pytest
     streamlit run app.py
+
+To run the API-backed frontend after installing `requirements.txt`:
+
+    uvicorn backend.main:app --reload
+
+Then open `http://127.0.0.1:8000/`; API documentation is at
+`http://127.0.0.1:8000/api/docs`.
 
 On Windows PowerShell, activate the environment with:
 
