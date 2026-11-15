@@ -1,5 +1,7 @@
 # FairLens
 
+Live application demo: https://fairlensinsight.streamlit.app/
+
 **Understand the decisions behind the model.**
 
 FairLens is an educational, human-centered model-auditing prototype. It helps a reviewer inspect a historical credit-risk classifier, compare predictive performance, examine differences in model outcomes between groups, and test the trade-offs created by changes to a decision threshold.
