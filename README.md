@@ -33,6 +33,17 @@ Other areas support applicant-level what-if exploration, proxy checks, an applic
 
 For claims, use the **Claim checker**, cite the source and analysis configuration, include group sizes and uncertainty, and distinguish observed differences from causal or legal conclusions.
 
+## Hands-on tools
+
+| Page | What you can do |
+| --- | --- |
+| **Applicant map** | Every applicant is a dot placed by similarity (PCA of non-sensitive inputs). Colour by score, group, mistakes or label; overlay a *fairness terrain* of look-alike regions where the two age groups are classified differently (blank where counts are too small); click a dot for a "why this score" chart, a look-alike check and a what-if path. |
+| **Applicant simulator** | Build a fictional applicant with sliders. Live score, per-input contributions, shortest what-if chain, and a one-click comparison of original and changed-group predictions. Inputs follow the historical benchmark, including credit history, credit amount, installment rate, and age. |
+| **Hidden bias challenge** | Predict whether favorable classifications differ between age groups, then reveal validation-set rates, denominators, and 95% intervals. The challenge's 5-point comparison band is a game rule, not a fairness standard. |
+| **Proxy detector** | Cross-validated test of whether age can be recovered from the other inputs, per-input proxy strength, and a with/without-age outcome comparison. |
+| **Mitigation lab** | Baseline, cost-tuned threshold, input removal, reweighing and a group-threshold what-if on one cost-versus-gap map, with bootstrap intervals. |
+| **Audit your own model** | Upload any CSV of decisions or scores plus a group column; get rates with intervals, error rates if truth is supplied, and plain-language findings. |
+
 ## Run locally
 
 Requires Python 3.11+ (the deployed Streamlit environment may differ; see current dependency files).

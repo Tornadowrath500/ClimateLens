@@ -100,8 +100,26 @@ with tab_what:
             "and FairLens must never be used to coach or decide about real applicants.", "caution")
 
 with tab_twin:
-    st.write("Change **only** a sensitive input and keep every other answer identical. If the score moves, the model uses that input directly.")
+    st.write("One-click counterfactual: ask whether this model's prediction would change if the same fictional applicant belonged to another group. Keep every other answer identical.")
     tw = sensitive_flip_test(pipe, row, train, thr)
+    original_probability = score(pipe, row)
+    age_value = float(row.iloc[0].get("Attribute13", 22))
+    other_age = 40 if age_value < 25 else 22
+    age_variant = f"Age {other_age}"
+    labels = [f"{r.changed_input}: {r.variant}" for r in tw.itertuples()]
+    default_label = next((f"{r.changed_input}: {r.variant}" for r in tw.itertuples() if r.variant == age_variant), labels[0])
+    selected_variant = st.selectbox("Change one demographic attribute", labels, index=labels.index(default_label))
+    result_index = labels.index(selected_variant)
+    counterfactual = tw.iloc[result_index]
+    left, right, delta = st.columns(3)
+    left.metric("Original score · Good", f"{original_probability:.1%}", "Higher means the model leans toward Good")
+    right.metric("Changed-group score · Good", f"{counterfactual['p_good']:.1%}", str(counterfactual["decision"]))
+    delta.metric("Score change", f"{counterfactual['change_vs_original']:+.1%}", "Counterfactual minus original")
+    if counterfactual["decision_changes"]:
+        st.warning(f"The model's label changes from {'Good' if original_probability >= thr else 'Bad'} to {counterfactual['decision']} when only {selected_variant} changes.")
+    else:
+        st.info(f"The model's label stays {'Good' if original_probability >= thr else 'Bad'} for this counterfactual.")
+    st.caption("This changes one recorded input while holding the others fixed. It does not show a real person's outcome or establish why a group difference exists. Age and other inputs may also act as proxies.")
     fig = go.Figure(go.Bar(x=tw["change_vs_original"], y=tw["changed_input"] + ": " + tw["variant"], orientation="h",
                            marker_color=[GREEN if v >= 0 else AMBER for v in tw["change_vs_original"]]))
     fig.update_xaxes(title="Change in score versus the profile above")
