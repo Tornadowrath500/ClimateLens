@@ -213,3 +213,4 @@ def test_repeat_split_gaps_returns_one_row_per_seed(synthetic_frame):
     out = repeat_split_gaps(synthetic_frame, LOGISTIC, seeds=range(3))
     assert len(out) == 3 and out["young_test_count"].min() > 10
     assert out["predicted_good_gap"].notna().all()
+

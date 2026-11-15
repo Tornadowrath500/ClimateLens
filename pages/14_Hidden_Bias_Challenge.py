@@ -75,3 +75,4 @@ if st.session_state.get("bias_challenge_revealed"):
 if st.button("Try another prediction"):
     st.session_state["bias_challenge_revealed"] = False
     st.rerun()
+

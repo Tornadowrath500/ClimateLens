@@ -35,3 +35,8 @@ Use bounded wording: “On this historical benchmark, under this evaluation setu
 - [ ] Keep the health simulation separate from historical credit evidence.
 - [ ] Download/inspect the report only after deliberately pinning the final test review.
 - [ ] Verify the app URL, deployed commit, and official submission instructions immediately before the demo.
+
+## Framing for health-AI reviewers
+
+FairLens audits a historical credit benchmark; it makes no health claims. The transferable contribution is the audit method: name the costlier error, report denominators and intervals, test proxies, compare thresholds, and state limits. The Health lab shows that method on clearly labelled synthetic data, and the "Same audit, different stakes" table translates each credit-audit question into its screening analogue. Real health use would need real data, clinical and community review, and local validation.
+

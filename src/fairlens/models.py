@@ -54,3 +54,4 @@ def prob_good(model: Pipeline, features: pd.DataFrame) -> np.ndarray:
     """Predicted probability of the Good-risk class (label 1), whatever the class order."""
     column = list(model.classes_).index(GOOD_RISK_LABEL)
     return model.predict_proba(features)[:, column]
+

@@ -90,3 +90,4 @@ def feature_label(column: str) -> str:
 def value_label(column: str, value) -> str:
     """Friendly text for a raw value; numbers and unknown codes pass through unchanged."""
     return VALUE_LABELS.get(column, {}).get(str(value), str(value))
+

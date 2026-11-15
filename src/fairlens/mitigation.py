@@ -106,3 +106,4 @@ def evaluate_strategies(strategies: dict[str, Strategy], y, g) -> pd.DataFrame:
         row["gap_classified_good_lo"], row["gap_classified_good_hi"] = lo, hi
         rows.append(row)
     return pd.DataFrame(rows)
+

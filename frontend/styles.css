@@ -493,3 +493,4 @@ body { background-image:radial-gradient(ellipse at 82% 0%, color-mix(in srgb,var
 .theme-toggle:hover { border-color:var(--brand); background:var(--brand-soft); }
 @media(max-width:860px) { .page-heading { padding:1rem 1rem 1rem 1.2rem; } }
 @media(prefers-reduced-motion:reduce) { .nav-link { transition:none; } }
+

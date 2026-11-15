@@ -79,3 +79,4 @@ def test_byo_group_table():
     assert t.set_index("group").loc["a", "selection_rate"] == 0.8 and t["small_group"].all()
     assert t.set_index("group").loc["b", "ratio_to_reference"] < 0.8
     assert any("below 0.80" in x or "very uncertain" in x for x in B.plain_summary(t))
+

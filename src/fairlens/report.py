@@ -220,3 +220,4 @@ def render_markdown(f: dict) -> str:
     lines += ["", "## Where to investigate next"] + [f"- {x}" for x in f["next_steps"]]
     lines += ["", "## Citation", CITATION, ""]
     return "\n".join(lines)
+
