@@ -49,7 +49,7 @@ callout(
 t = rep["per_feature"].head(8).iloc[::-1]
 fig = go.Figure(go.Bar(x=t["auc"] - 0.5, y=t["feature"], orientation="h", marker_color=[AMBER if a >= 0.65 else SAGE for a in t["auc"]],
                        text=[f"AUC {a:.2f}" for a in t["auc"]], textposition="outside", base=0.5))
-fig.update_xaxes(range=[0.45, 1.0], title="How well this ONE input alone recovers age group (AUC)")
+fig.update_xaxes(range=[0.45, 1.12], title="How well this ONE input alone recovers age group (AUC)")
 st.subheader("Which inputs act as proxies?")
 show_chart(style(fig, 360))
 st.caption("Each bar is a model using a single input, scored by 5-fold cross-validation. Amber means 0.65 or higher.")

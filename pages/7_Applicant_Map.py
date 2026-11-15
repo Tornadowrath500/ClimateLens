@@ -50,12 +50,19 @@ summary = terrain_summary(t)
 
 COLORS = {
     "Age group": {YOUNG: AMBER, OLD: GREEN},
-    "Mistakes": {KIND_OK: SAGE, KIND_FALSE_GOOD: "#b3261e", KIND_FALSE_BAD: AMBER},
+    "Mistakes": {KIND_OK: SAGE, KIND_FALSE_GOOD: "#ff766e", KIND_FALSE_BAD: AMBER},
     "Actual label": {True: GREEN, False: AMBER},
 }
 if colour_by == "Model score":
     marker = dict(size=9, color=frame["p_good"], colorscale=[[0, AMBER], [0.5, "#e8ece6"], [1, GREEN]], cmin=0, cmax=1,
-                  colorbar=dict(title="Score", thickness=10), line=dict(width=0.6, color="#ffffff"))
+                  # Keep this scale above the plot. Plotly otherwise places it at
+                  # the same right edge as the terrain scale, which makes both
+                  # titles and tick labels collide.
+                  colorbar=dict(
+                      title="Model score", orientation="h", x=0.34, xanchor="center",
+                      y=1.14, yanchor="bottom", len=0.42, thickness=10,
+                      tickformat=".1f", outlinewidth=0,
+                  ), line=dict(width=0.6, color="#ffffff"))
 else:
     key = {"Age group": "group", "Mistakes": "kind", "Actual label": "actual_good"}[colour_by]
     marker = dict(size=9, color=[COLORS[colour_by][v] for v in frame[key]], line=dict(width=0.6, color="#ffffff"))
@@ -73,7 +80,10 @@ if terrain_on and summary["regions"]:
     fig.add_trace(go.Heatmap(
         x=(xe[:-1] + xe[1:]) / 2, y=(ye[:-1] + ye[1:]) / 2, z=z, text=tip, hoverinfo="text", hoverongaps=False, opacity=0.55,
         colorscale=[[0, "#e0a441"], [0.5, "#f4f2ea"], [1, "#6aa58f"]], zmin=-0.4, zmax=0.4, showscale=True,
-        colorbar=dict(title="Younger minus<br>older rate", x=1.02, thickness=10, tickformat="+.0%"), xgap=2, ygap=2,
+        colorbar=dict(
+            title="Younger minus<br>older rate", x=1.03, xanchor="left", y=0.5,
+            len=0.86, thickness=12, tickformat="+.0%", outlinewidth=0,
+        ), xgap=2, ygap=2,
     ))
 scatter_curve = len(fig.data)
 fig.add_trace(go.Scatter(
@@ -83,12 +93,24 @@ fig.add_trace(go.Scatter(
 ))
 fig.update_xaxes(title=f"Similarity axis 1 ({md.explained[0]:.0%} of variation)", showticklabels=False)
 fig.update_yaxes(title=f"Similarity axis 2 ({md.explained[1]:.0%})", showticklabels=False)
-style(fig, 560)
-fig.update_layout(clickmode="event+select", dragmode="select", margin=dict(l=10, r=10, t=10, b=10))
+style(fig, 600)
+has_terrain_scale = terrain_on and bool(summary["regions"])
+has_score_scale = colour_by == "Model score"
+fig.update_layout(
+    clickmode="event+select", dragmode="select",
+    # Reserve dedicated space for the horizontal score scale, the vertical
+    # terrain scale, and the long similarity-axis titles.
+    margin=dict(
+        l=72, r=175 if has_terrain_scale else 32,
+        t=100 if has_score_scale else 48, b=72,
+    ),
+)
 try:
-    event = st.plotly_chart(fig, theme=None, width="stretch", on_select="rerun", selection_mode="points", key="applicant_map")
+    event = st.plotly_chart(fig, theme=None, width="stretch", config={"responsive": True, "displaylogo": False},
+                            on_select="rerun", selection_mode="points", key="applicant_map")
 except TypeError:
-    event = st.plotly_chart(fig, theme=None, use_container_width=True, on_select="rerun", selection_mode="points", key="applicant_map")
+    event = st.plotly_chart(fig, theme=None, use_container_width=True, config={"responsive": True, "displaylogo": False},
+                            on_select="rerun", selection_mode="points", key="applicant_map")
 
 legend = {"Model score": "Colour = model's score for Good (amber low, green high)",
           "Age group": f"Amber = {YOUNG}, green = {OLD}", "Mistakes": "Red = costly mistake, amber = turned away wrongly, sage = correct",

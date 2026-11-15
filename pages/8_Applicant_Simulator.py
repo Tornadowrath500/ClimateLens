@@ -74,7 +74,7 @@ row = pd.DataFrame([vals])[X.columns].astype(X.dtypes.to_dict())
 # ---- live result -------------------------------------------------------------------------------------------
 p = score(pipe, row)
 thr = op.threshold
-st.markdown(decision_chip(p, thr) + f" <span style='color:#5d6b65'>using {settings.model.lower()}, {op.describe()}</span>", unsafe_allow_html=True)
+st.markdown(decision_chip(p, thr) + f" <span style='color:#9aacc2'>using {settings.model.lower()}, {op.describe()}</span>", unsafe_allow_html=True)
 score_bar(p, thr)
 tab_why, tab_what, tab_twin = st.tabs(["Why this score", "What would change it", "Twin test (sensitive inputs)"])
 

@@ -37,7 +37,9 @@ col = {"Classified Good": "gap_classified_good", "False Good (Bad cases called G
 fig = go.Figure()
 for _, r in table.iterrows():
     fig.add_trace(go.Scatter(
-        x=[r["cost_per_applicant"]], y=[abs(r[col])], mode="markers+text", text=[r["strategy"]], textposition="top center",
+        # Keep names in hover and the table below. Long labels overlap when
+        # several strategies land near the same trade-off point.
+        x=[r["cost_per_applicant"]], y=[abs(r[col])], mode="markers",
         marker=dict(size=15, color=AMBER if "what-if" in r["strategy"] else GREEN, symbol="diamond" if r["strategy"] == "Baseline" else "circle"),
         hovertemplate=f"{r['strategy']}<br>Cost per applicant %{{x:.2f}}<br>Absolute gap %{{y:.1%}}<extra></extra>", showlegend=False,
     ))
@@ -45,7 +47,7 @@ fig.update_xaxes(title="UCI cost per applicant (lower is better)")
 fig.update_yaxes(title="Absolute gap between age groups (lower is closer)", tickformat=".0%", rangemode="tozero")
 st.subheader("The trade-off map")
 show_chart(style(fig, 440))
-st.caption("Bottom-left is ideal. Notice how rarely a strategy improves both axes. Amber marks a what-if that treats groups differently.")
+st.caption("Hover over a point to identify its strategy. Bottom-left is ideal; notice how rarely a strategy improves both axes. Amber marks a what-if that treats groups differently.")
 
 best_gap = table.loc[table[col].abs().idxmin()]
 best_cost = table.loc[table["cost_per_applicant"].idxmin()]
