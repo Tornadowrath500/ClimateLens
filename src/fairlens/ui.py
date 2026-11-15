@@ -3,6 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import json
+import os
+
+import requests
 
 import numpy as np
 import pandas as pd
@@ -440,8 +444,46 @@ h1 { background: linear-gradient(95deg, var(--fl-ink) 55%, var(--fl-cyan)); -web
 """
 
 
+def audit_guide() -> None:
+    with st.popover("Ask the Audit Guide", icon=":material/forum:"):
+        st.caption("Ask about FairLens metrics, evidence, limitations, or next review steps. AI answers are not financial, legal, or medical advice. Do not enter personal, applicant, patient, or account data. Submitted questions go to OpenAI; request storage is disabled.")
+        history = st.session_state.setdefault("fl_guide_history", [])
+        for item in history[-6:]:
+            with st.chat_message(item["role"]): st.write(item["content"])
+        with st.form("fl_audit_guide_form", clear_on_submit=True):
+            question = st.text_input("Question")
+            submitted = st.form_submit_button("Ask", type="primary")
+        if submitted and question.strip():
+            answer = _audit_guide_reply(question.strip(), history)
+            history.extend([{"role":"user","content":question.strip()[:1000]}, {"role":"assistant","content":answer}])
+            st.rerun()
+
+def _audit_guide_reply(question: str, history: list[dict[str, str]]) -> str:
+    key = os.getenv("OPENAI_API_KEY")
+    if not key:
+        try: key = st.secrets.get("OPENAI_API_KEY")
+        except Exception: key = None
+    if not key: return "AI is not enabled. Add OPENAI_API_KEY in Streamlit Cloud app Secrets."
+    q = question.lower()
+    if any(term in q for term in ("my loan", "my credit", "should i borrow", "should i invest", "approve me", "will i be approved", "my application", "diagnose me")):
+        return "I can’t advise on individual financial, credit, or health decisions. I can explain FairLens methods or suggest evidence to review."
+    context = {"page":st.session_state.get("fl_current_page","FairLens"), "mode":"synthetic demo" if st.session_state.get("use_demo_data") else "historical benchmark", "scope":"Educational only; credit benchmark is from 1994 and not current applicants."}
+    review = st.session_state.get("final_test_review")
+    if isinstance(review, dict):
+        f = review.get("findings", {}); t = f.get("test", {}) if isinstance(f, dict) else {}
+        context["pinned_review"] = {"model":review.get("model"), "decision_rule":review.get("decision_rule"), "test_n":f.get("n_test") if isinstance(f,dict) else None, "metrics":{k:t[k] for k in ("accuracy","recall_other","cost_per_applicant") if isinstance(t,dict) and isinstance(t.get(k),(int,float))}}
+    instructions = "You are FairLens Audit Guide. Explain only app methods, metrics, aggregate results, limitations, or non-decision review steps. Never recommend financial actions, lending decisions, healthcare actions, or legal conclusions. Gaps do not prove fairness, bias, discrimination, or cause. Data are historical; health simulation is synthetic. If context is insufficient, say so. Be concise. Aggregate context: " + json.dumps(context, default=str)[:3000]
+    payload = {"model":os.getenv("FAIRLENS_AI_MODEL","gpt-4.1-mini"), "store":False, "max_output_tokens":350, "instructions":instructions, "input":history[-6:]+[{"role":"user","content":question[:1000]}]}
+    try:
+        response = requests.post("https://api.openai.com/v1/responses", headers={"Authorization":"Bearer "+key,"Content-Type":"application/json"}, json=payload, timeout=25)
+        response.raise_for_status(); return response.json().get("output_text", "").strip() or "I don’t have enough grounded context to answer that."
+    except requests.RequestException: return "The AI service is unavailable. Try later; no audit result was changed."
+    except (ValueError, TypeError): return "The AI returned an unreadable response. Try again later."
+
 def setup_page(title: str) -> None:
-    """Inject the shared UI skin; app.py configures the Streamlit page once."""
+    """Inject shared skin and the bounded Audit Guide on every page."""
+    st.session_state["fl_current_page"] = title
+    audit_guide()
     st.markdown(CSS, unsafe_allow_html=True)
     if st.session_state.get("fl_light_mode", False):
         st.markdown(LIGHT_MODE_CSS, unsafe_allow_html=True)
