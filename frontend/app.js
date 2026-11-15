@@ -1,6 +1,7 @@
 import { api, ApiError } from "./api.js";
 import { store, settingsPayload, requestBody } from "./store.js";
 import { h } from "./utils.js";
+import { scatterMap, barH } from "./components/charts.js";
 
 const pages = [
   ["overview", "Overview", "01"], ["data", "Understand the data", "02"],
@@ -15,6 +16,7 @@ const esc = (v) => String(v ?? "—");
 let meta = null;
 let current = location.hash.slice(1) || "overview";
 let busy = false;
+const mapOptions = { colorBy:"Model score", terrain:true, includeTrain:false, bins:5, minPerGroup:5, selected:0 };
 
 function button(label, fn, kind = "secondary") { return h("button", { class: `button ${kind}`, onclick: fn }, label); }
 function card(title, body, eyebrow = "") { return h("section", { class: "card" }, eyebrow && h("div", { class: "eyebrow" }, eyebrow), h("h2", title), body); }
@@ -97,6 +99,49 @@ function renderSimulator(title, intro, schema) {
     card("Model response", outcome, "WHAT-IF REVIEW")
   ));
 }
+async function renderApplicantMap(title, intro) {
+  const config = store.get();
+  const request = (extra = {}) => requestBody(meta || {groups:{young:"under 25",old:"25 or older"}}, {
+    include_train:mapOptions.includeTrain, bins:mapOptions.bins, min_per_group:mapOptions.minPerGroup, ...extra
+  });
+  const choose = (i) => { mapOptions.selected=i; renderApplicantMap(title,intro); };
+  let data, applicant;
+  try {
+    data = await api.map(request());
+    applicant = await api.mapApplicant(request({index:mapOptions.selected}));
+  } catch (e) { renderError(title,intro,e); return; }
+
+  const select = (label, options, value, change) => h("label", {class:"map-control"},label,
+    h("select", {value, onchange:(e)=>{change(e.target.value);renderApplicantMap(title,intro);}},options.map((v)=>h("option",{value:v,selected:value===v},v))));
+  const controls = h("div", {class:"map-controls"},
+    select("COLOUR BY",["Model score","Age group","Mistakes","Actual label"],mapOptions.colorBy,(v)=>mapOptions.colorBy=v),
+    select("TERRAIN GRID",[3,4,5,6,7,8].map(String),String(mapOptions.bins),(v)=>mapOptions.bins=Number(v)),
+    select("MINIMUM PER GROUP",[3,5,8,10,12,15].map(String),String(mapOptions.minPerGroup),(v)=>mapOptions.minPerGroup=Number(v)),
+    h("label",{class:"map-check"},h("input",{type:"checkbox",checked:mapOptions.terrain,onchange:(e)=>{mapOptions.terrain=e.target.checked;renderApplicantMap(title,intro);}}),"Fairness terrain"),
+    h("label",{class:"map-check"},h("input",{type:"checkbox",checked:mapOptions.includeTrain,onchange:(e)=>{mapOptions.includeTrain=e.target.checked;mapOptions.selected=0;renderApplicantMap(title,intro);}}),"Include training applicants")
+  );
+  const chart = scatterMap({points:data.points,terrain:mapOptions.terrain?data.terrain:[],bins:data.bins,colorBy:mapOptions.colorBy,kinds:data.kinds,groups:data.groups,selected:mapOptions.selected,onSelect:choose,explained:data.explained});
+  const summary=data.terrain_summary||{};
+  const summaryBlock=summary.regions
+    ? h("div",{class:"terrain-summary"},h("strong",`${summary.regions} reliable regions`),h("p",`Across ${summary.applicants_covered} applicants, younger and older look-alikes have a weighted classified-Good gap of ${(Math.abs(summary.weighted_gap)*100).toFixed(1)} points.`),h("small","A difference is a signal to investigate, not proof of discrimination or its cause."))
+    : h("div",{class:"terrain-summary muted"},"No region has enough applicants from both groups. Try a coarser grid, a lower minimum, or include training applicants.");
+  const pointCount=h("span",{class:"map-caption"},`${data.n} applicants · ${mapOptions.includeTrain?"training + validation":"validation only"} · Similarity uses non-sensitive inputs`);
+  const selectedTable=table(applicant.profile||[],[["label","Input"],["value","Value"]]);
+  const explanation=(applicant.explain||[]).slice(0,8).map((r)=>({label:r.feature,value:r.contribution,fill:r.contribution>=0?"old":"young",tip:`${r.feature}: ${r.contribution>=0?"raises":"lowers"} the Good-risk score`}));
+  const people=applicant.look_alikes||{};
+  const applicantPanel=h("div",{class:"applicant-detail"},
+    h("div",{class:"applicant-heading"},h("div",{},h("div",{class:"eyebrow"},`APPLICANT ${applicant.index} · ${applicant.part||"validation"}`),h("h2",applicant.group||"Applicant")),
+      h("div",{class:"score-pill"},h("strong",`${(applicant.score*100).toFixed(0)}%`),h("small","estimated Good"))),
+    h("p",{class:"muted"},`Labeled ${applicant.actual_good?"Good":"Bad"} in the historical data. Decision threshold: ${(applicant.threshold*100).toFixed(0)}%.`),
+    h("div",{class:"map-detail-grid"},card("Applicant profile",selectedTable),card("Why this score?",barH({rows:explanation,xTitle:"Change in model score",format:(v)=>`${v>0?"+":""}${(v*100).toFixed(0)} pts`,title:"Input contributions",label:"Inputs that raise or lower this model score"}))),
+    h("div",{class:"lookalike-row"},["same","other"].map((key)=>{const q=people[key]||{};return h("div",{class:"lookalike-card"},h("span",key==="same"?"Same age group":"Other age group"),h("strong",q.n?`${(q.classified_good*100).toFixed(0)}% classified Good`:"No matches"),h("small",`${q.n||0} closest · ${(100*(q.actual_good||0)).toFixed(0)}% labelled Good`));})),
+    applicant.path?.steps?.length?h("details",{class:"path-detail"},h("summary","What changes could flip this decision?"),table(applicant.path.steps,[["feature","Input"],["from","Current"],["to","Alternative"],["p_after","Score after"]]),h("small",applicant.path.flipped?"The example path flips the model decision. This describes model behavior, not advice to an applicant.":"The tested changes did not flip the model decision.")):null
+  );
+  shell(title,intro,h("div",{class:"map-page"},controls,
+    h("section",{class:"card map-card"},chart,pointCount,summaryBlock),
+    applicantPanel
+  ));
+}
 function renderPage(title, intro, data) {
   const action = current === "experiment" ? h("div", { class: "row section" },
       button("Pin final test review", async () => { try { const result = await api.pin(body()); renderPage("Final review pinned", "The test set is now frozen for this browser session.", result); } catch (e) { renderError(title, intro, e); } }, "primary"))
@@ -128,7 +173,7 @@ async function route() {
   if (current === "experiment") return load(title,intro,()=>api.sweep(body()));
   if (current === "report") return load(title,intro,()=>api.findings());
   if (current === "methodology") return load(title,intro,()=>api.methodology(src));
-  if (current === "map") return load(title,intro,()=>api.map(body()));
+  if (current === "map") { if(!meta) { try { meta=await api.meta(); } catch {} } await renderApplicantMap(title,intro); return; }
   if (current === "simulator") { try { const schema=await api.simSchema(src); renderSimulator(title,intro,schema); } catch(e) { renderError(title,intro,e); } return; }
   if (current === "proxies") return load(title,intro,()=>api.proxyReport({source:src}));
   if (current === "mitigation") return load(title,intro,()=>api.mitigation({source:src,model:store.get().model}));
