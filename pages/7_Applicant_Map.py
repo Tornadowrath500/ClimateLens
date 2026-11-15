@@ -61,9 +61,9 @@ else:
     marker = dict(size=9, color=[COLORS[colour_by][v] for v in frame[key]], line=dict(width=0.6, color="#ffffff"))
 marker["symbol"] = ["diamond" if g == YOUNG else "circle" for g in frame["group"]]
 
-left, right = st.columns([1.4, 1])
+map_col, detail_col = st.columns([1.4, 1])
 
-with left:
+with map_col:
     fig = go.Figure()
     if terrain_on and summary["regions"]:
         xe, ye = np.linspace(frame["x"].min(), frame["x"].max(), bins + 1), np.linspace(frame["y"].min(), frame["y"].max(), bins + 1)
@@ -99,10 +99,9 @@ with left:
     st.caption(f"{legend}. Diamonds are {YOUNG}; circles are {OLD}. Positions come from non-sensitive inputs only. "
                f"{len(frame)} applicants ({'validation + training' if more else 'validation only'}).")
 
-with right:
+with detail_col:
     st.subheader("Applicant details")
     # ---- selected applicant ------------------------------------------------------------------------------------
-    st.subheader("Inspect an applicant")
     picked = None
     try:
         pts = [q for q in event.selection.points if q.get("curve_number", scatter_curve) == scatter_curve]
@@ -119,13 +118,13 @@ with right:
     pipe = audit.pipelines[settings.model]
     thr = op.threshold if not op.per_group else op.per_group.get(frame.loc[i, "group"], op.threshold)
     p = score(pipe, row)
-    left, right = st.columns([1, 1.25])
-    with left:
+    profile_col, explanation_col = st.columns([1, 1.25])
+    with profile_col:
         st.markdown(f"**Applicant {i}** · {frame.loc[i, 'group']} · labelled {'Good' if frame.loc[i, 'actual_good'] else 'Bad'} in the data")
         st.markdown(decision_chip(p, thr), unsafe_allow_html=True)
         score_bar(p, thr)
         show_table(friendly_profile(row))
-    with right:
+    with explanation_col:
         st.markdown("**Why this score?** (each input's push versus a typical applicant)")
         show_chart(contribution_chart(explain(pipe, row, audit.splits.X_train)))
         st.caption("Measured by swapping one input at a time for values from other applicants. Interpretation, not causation.")
