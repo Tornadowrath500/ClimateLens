@@ -24,6 +24,56 @@ callout(
     "note",
 )
 
+if not st.session_state.get("fl_tutorial_done"):
+    with st.container(border=True):
+        st.markdown("### New to FairLens?")
+        st.write("Take the animated, step-by-step tour to see how the data, model, group comparisons, and experiments fit together.")
+        st.page_link("pages/13_Tutorial.py", label="Start the animated tour", icon=":material/play_circle:")
+
+profile = st.session_state.get("fl_profile")
+if profile and st.session_state.get("fl_profile_active"):
+    name = profile.get("display_name")
+    avatar = profile.get("avatar", "🔎")
+    st.subheader(f"{avatar}  Welcome, {name}." if name else f"{avatar}  Welcome.")
+    st.page_link("pages/12_Profile.py", label="Customize your profile", icon=":material/tune:")
+    suggestions = []
+    if profile.get("age") is not None:
+        suggestions.append((
+            "Age and group outcomes",
+            "See how FairLens defines its under-25 and 25-and-over comparison, and where that split is limited.",
+            "pages/3_Investigate_Group_Outcomes.py",
+            ":material/groups:",
+        ))
+    if profile.get("sex") != "Prefer not to say" or profile.get("personal_status") != "Prefer not to say":
+        suggestions.append((
+            "Sensitive fields in the data",
+            "Learn how the historic benchmark combines personal status and sex in one field.",
+            "pages/1_Understand_the_Data.py",
+            ":material/database:",
+        ))
+    interest_pages = {
+        "Model performance": ("Compare model performance", "Review model errors and their different costs.", "pages/2_Evaluate_the_Model.py", ":material/monitoring:"),
+        "Fairness across groups": ("Explore group outcomes", "Compare rates with denominators and uncertainty.", "pages/3_Investigate_Group_Outcomes.py", ":material/groups:"),
+        "How predictions work": ("Explore an applicant profile", "Use fictional profiles to inspect scores and what-if changes.", "pages/8_Applicant_Simulator.py", ":material/tune:"),
+        "Hands-on experiments": ("Try an experiment", "Explore threshold changes and their trade-offs.", "pages/4_Experiment_Lab.py", ":material/science:"),
+    }
+    for interest in profile.get("interests", []):
+        item = interest_pages[interest]
+        if item[2] not in [suggestion[2] for suggestion in suggestions]:
+            suggestions.append(item)
+    if not suggestions:
+        suggestions.append((
+            "Start with the data",
+            "See what the historical records contain and what they leave out.",
+            "pages/1_Understand_the_Data.py",
+            ":material/database:",
+        ))
+    with st.container(border=True):
+        st.markdown("**Suggested for you**")
+        for title, description, page, icon in suggestions[:3]:
+            st.write(description)
+            st.page_link(page, label=title, icon=icon)
+
 have_data = dataset_path().exists() or demo_active()
 if not have_data:
     st.info("The benchmark is not loaded on this computer yet. Start with the data page, or explore the interface using clearly labelled synthetic demo data.")

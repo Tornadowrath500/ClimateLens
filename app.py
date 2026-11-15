@@ -5,7 +5,8 @@ from fairlens.ui import theme_control
 
 
 st.set_page_config(
-    page_icon="◈",
+    page_title="FairLens · Model audit",
+    page_icon="assets/fairlens-mark.svg",
     layout="wide",
     initial_sidebar_state="auto",
 )
@@ -15,7 +16,9 @@ theme_control()
 navigation = st.navigation(
     {
         "START": [
-            st.Page("pages/0_Home.py", title="Home", icon=":material/home:", default=True),
+            st.Page("pages/12_Profile.py", title="Sign up / log in", icon=":material/account_circle:", default=True),
+            st.Page("pages/0_Home.py", title="Home", icon=":material/home:"),
+            st.Page("pages/13_Tutorial.py", title="Take the tour", icon=":material/auto_awesome:"),
         ],
         "REVIEW THE MODEL": [
             st.Page("pages/1_Understand_the_Data.py", title="Data & scope", icon=":material/database:"),

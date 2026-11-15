@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">FairLens</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#10283d"/>
+      <stop offset="1" stop-color="#07111f"/>
+    </linearGradient>
+    <linearGradient id="lens" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#61c9ff"/>
+      <stop offset="1" stop-color="#42ddb3"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="url(#bg)"/>
+  <circle cx="54" cy="53" r="30" fill="none" stroke="url(#lens)" stroke-width="9"/>
+  <path d="m76 75 27 27" fill="none" stroke="#42ddb3" stroke-linecap="round" stroke-width="11"/>
+  <path d="M39 54h30M54 39v30" fill="none" stroke="#e6f1ff" stroke-linecap="round" stroke-width="4" opacity=".86"/>
+  <circle cx="54" cy="54" r="5" fill="#f2b84b"/>
+</svg>
