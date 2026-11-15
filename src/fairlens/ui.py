@@ -496,8 +496,8 @@ GUIDE_HTML = '<div id="fairlens-guide"></div>'
 GUIDE_CSS = r"""
 #fairlens-guide{--bg:var(--st-background-color,#081421);--panel:var(--st-secondary-background-color,#102033);--fg:var(--st-text-color,#e6f1ff);--muted:color-mix(in srgb,var(--fg) 68%,transparent);--line:color-mix(in srgb,var(--fg) 18%,transparent);color:var(--fg);font:14px/1.5 var(--st-font,system-ui,sans-serif)}
 #fairlens-guide *{box-sizing:border-box} #fairlens-guide button{font:inherit;cursor:pointer}
-#fairlens-guide .launch{position:fixed;z-index:110;right:22px;bottom:22px;display:flex;align-items:center;gap:9px;border:1px solid #42ddb388;color:#07151c;background:linear-gradient(135deg,#42ddb3,#61c9ff);padding:9px 15px 9px 9px;border-radius:999px;font-weight:750;box-shadow:0 8px 32px #0005,0 0 26px #42ddb32e;transition:transform .18s ease,box-shadow .18s ease} #fairlens-guide .launch:hover{transform:translateY(-2px);box-shadow:0 12px 38px #0006,0 0 32px #42ddb34d} #fairlens-guide .botmark{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#07151c;color:#42ddb3;font-size:19px} #fairlens-guide .onlinedot{width:7px;height:7px;border-radius:50%;background:#0b654f;box-shadow:0 0 0 3px #0b654f24}
-#fairlens-guide .panel{position:fixed;z-index:130;right:22px;bottom:78px;width:min(370px,calc(100vw - 28px));height:min(560px,calc(100vh - 100px));overflow:hidden;display:none;flex-direction:column;border:1px solid var(--line);border-radius:18px;background:var(--bg);box-shadow:0 24px 90px #0007,0 0 36px #42ddb31a}
+#fairlens-guide .launch{position:fixed;z-index:110;left:max(306px,calc((100vw - 1240px)/2 + 306px));right:auto;bottom:22px;display:flex;align-items:center;gap:9px;border:1px solid #42ddb388;color:#07151c;background:linear-gradient(135deg,#42ddb3,#61c9ff);padding:9px 15px 9px 9px;border-radius:999px;font-weight:750;box-shadow:0 8px 32px #0005,0 0 26px #42ddb32e;transition:transform .18s ease,box-shadow .18s ease} #fairlens-guide .launch:hover{transform:translateY(-2px);box-shadow:0 12px 38px #0006,0 0 32px #42ddb34d} #fairlens-guide .botmark{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#07151c;color:#42ddb3;font-size:19px} #fairlens-guide .onlinedot{width:7px;height:7px;border-radius:50%;background:#0b654f;box-shadow:0 0 0 3px #0b654f24}
+#fairlens-guide .panel{position:fixed;z-index:130;left:max(306px,calc((100vw - 1240px)/2 + 306px));right:auto;bottom:78px;width:min(370px,calc(100vw - 28px));height:min(560px,calc(100vh - 100px));overflow:hidden;display:none;flex-direction:column;border:1px solid var(--line);border-radius:18px;background:var(--bg);box-shadow:0 24px 90px #0007,0 0 36px #42ddb31a}
 #fairlens-guide .panel.open{display:flex;animation:rise .2s ease-out}@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
 #fairlens-guide .head{padding:11px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)} #fairlens-guide .orb{width:10px;height:10px;border-radius:50%;background:#42ddb3;box-shadow:0 0 14px #42ddb3} #fairlens-guide .title{flex:1;font-weight:750} #fairlens-guide small,#fairlens-guide .small{display:block;color:var(--muted);font-size:11px}
 #fairlens-guide .notice{padding:7px 14px;color:var(--muted);font-size:11px;border-bottom:1px solid var(--line)}
@@ -522,7 +522,7 @@ GUIDE_CSS = r"""
 @keyframes guide-pulse{50%{opacity:.45}}
 
 #fairlens-guide .small{padding:0 13px 8px}
-@media(max-width:500px){#fairlens-guide .launch{right:14px;bottom:14px;padding:7px;border-radius:50%}#fairlens-guide .launchtext,#fairlens-guide .onlinedot{display:none}#fairlens-guide .panel{right:10px;bottom:72px;height:min(560px,calc(100vh - 90px))}}
+@media(max-width:760px){#fairlens-guide .launch{left:14px;right:auto;bottom:14px;padding:7px;border-radius:50%}#fairlens-guide .launchtext,#fairlens-guide .onlinedot{display:none}#fairlens-guide .panel{left:10px;right:auto;bottom:72px;width:min(370px,calc(100vw - 20px));height:min(560px,calc(100vh - 90px))}}
 """
 GUIDE_JS = r"""
 export default function({parentElement,data}){
@@ -643,6 +643,7 @@ def audit_guide() -> None:
             "uncertainty": "Group rates include 95% Wilson intervals; repeated splits are used to inspect stability. Small groups have noisier estimates.",
             "synthetic_health_lab": "The health equity lab uses invented records to illustrate assumptions and metrics. It is not patient data, a clinical audit, or evidence about real screening systems.",
             "limits": "The benchmark is old, small, specific to its historical context, and has coding/documentation limitations. Do not generalize its results to current applicants or institutions.",
+            "live_consumer_signals": "A separate page shows aggregate U.S. CFPB complaint counts for a selected recent period. The CFPB generally updates its database daily and FairLens caches for up to one hour. Complaints are not a representative sample, verified wrongdoing, lending outcomes, or evidence of fairness. The chat is not given live feed counts.",
             "metric_definitions": METRIC_HELP,
         },
         "available_live_evidence": "The assistant receives the page title and only an explicitly pinned final-test summary. It does not receive the page's charts, unpinned metrics, raw applicant rows, uploaded files, or personal records. Never invent a current metric or claim to have inspected evidence that is not included here.",
