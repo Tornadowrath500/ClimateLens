@@ -1,0 +1,16 @@
+{
+  "dataset": "Statlog (German Credit Data)",
+  "uci_id": 144,
+  "source": "https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data",
+  "citation": "Hofmann, H. (1994). Statlog (German Credit Data) [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5NC77 (CC BY 4.0)",
+  "license": "CC BY 4.0",
+  "retrieved_utc": "2026-11-15T03:01:33.660584+00:00",
+  "rows": 1000,
+  "feature_count": 20,
+  "target_column": "class",
+  "target_encoding": {
+    "1": "Good",
+    "2": "Bad"
+  },
+  "note": "Public UCI benchmark, shared under CC BY 4.0. Do not add private or user-supplied records."
+}

@@ -131,7 +131,7 @@ Current repository layout (verify against the live tree before making assumption
 - `scripts/`: explicit dataset acquisition
 - `tests/`: automated checks
 - `docs/`: methodology, data/ethics, roadmap, design decisions
-- `data/`: local-only data and manifest; not committed
+- `data/`: bundled public benchmark and attribution manifest; never commit private/user data
 - `requirements.txt`, `pyproject.toml`: dependencies and package configuration
 
 Prefer small, testable modules and explicit interfaces over a monolithic Streamlit script. Keep UI code separate from model and metric logic.

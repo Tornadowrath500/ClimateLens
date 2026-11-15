@@ -19,9 +19,9 @@ FairLens is an educational, human-centered model-auditing prototype. It helps a 
 
 ## Initial benchmark
 
-The planned benchmark is the [UCI Statlog (German Credit Data)](https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data), donated in 1994. It contains 1,000 historical examples, 20 input features, and a binary target: 1 = Good, 2 = Bad. The source also provides a cost matrix in which classifying an actually Bad-risk applicant as Good has five times the cost of the reverse error.
+The bundled benchmark is the [UCI Statlog (German Credit Data)](https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data), donated in 1994. It contains 1,000 historical examples, 20 input features, and a binary target: 1 = Good, 2 = Bad. The source also provides a cost matrix in which classifying an actually Bad-risk applicant as Good has five times the cost of the reverse error. The dataset is CC BY 4.0 and its attribution is included with the bundled data.
 
-The dataset's historical German context is a major limitation. It does not represent current lending practices or today's applicant population. See docs/DATA_AND_ETHICS.md.
+The dataset's historical German context is a major limitation. UCI's later South German Credit release also reports severe errors in the original Statlog coding information. FairLens retains Statlog for this educational workflow, so interpret code-specific findings cautiously; it does not represent current lending practices or today's applicants. See docs/DATA_AND_ETHICS.md.
 
 ## Intended user journey
 
@@ -58,7 +58,7 @@ New core modules (all unit-tested, no Streamlit imports): `applicant.py`, `mapvi
 ├── docs/                   # Methodology, roadmap, handoff, submission guide
 ├── backend/                # FastAPI routes, schemas, state, and service adapters
 ├── frontend/               # Independent HTML, CSS, and JavaScript client
-└── data/                   # Local data only; not committed
+└── data/                   # Bundled public benchmark and attribution manifest
 ```
 
 The original Streamlit application is retained while the API-backed web client
@@ -89,11 +89,11 @@ On Windows PowerShell, activate the environment with:
 
     .venv\Scripts\Activate.ps1
 
-The application never downloads data silently or shows placeholder numbers. Fetch the benchmark with the button on the first page, or run:
+The UCI benchmark is bundled, so the app is ready to use without a separate data download. The app never fetches data silently or shows placeholder numbers. To refresh a local benchmark copy, run:
 
     python scripts/download_dataset.py
 
-The downloaded file and manifest remain local and are excluded from Git. See data/README.md.
+The public benchmark and its manifest are versioned with the app under the UCI CC BY 4.0 license. Private or user-supplied data must remain out of Git. See data/README.md.
 
 ## Evaluation commitments
 
@@ -106,7 +106,7 @@ The downloaded file and manifest remain local and are excluded from Git. See dat
 
 ## Current status
 
-The application code includes baselines, Logistic Regression and Random Forest, the UCI cost matrix, an age-group audit with intervals and repeated-split sensitivity checks, a validation-only threshold lab, and a downloadable report. The core suite currently passes 33 tests; the Streamlit page smoke tests and real-data download still need verification in an environment with Streamlit and network access. See docs/HANDOFF.md for the verification record, and docs/SUBMISSION.md for the write-up and demo plan.
+The application code includes baselines, Logistic Regression and Random Forest, the UCI cost matrix, an age-group audit with intervals and repeated-split sensitivity checks, a validation-only threshold lab, and a downloadable report. See docs/HANDOFF.md for the verification record, and docs/SUBMISSION.md for the write-up and demo plan.
 
 ## Project licensing
 

@@ -121,7 +121,7 @@ def download_dataset(raw_dir: Path = RAW_DATA_DIR, *, output_path: Path | None =
         "feature_count": int(features.shape[1]),
         "target_column": TARGET_COLUMN,
         "target_encoding": {"1": "Good", "2": "Bad"},
-        "note": "Keep this local copy and manifest out of Git.",
+        "note": "Public UCI benchmark, shared under CC BY 4.0. Do not add private or user-supplied records.",
     }
     destination.with_name(MANIFEST_PATH.name).write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return frame

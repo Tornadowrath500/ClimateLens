@@ -29,6 +29,11 @@ st.write(
     "'Good' prediction here is called a favorable prediction, never an approval."
 )
 callout(
+    "Real historical data, with an important coding caveat",
+    "This is the public UCI historical benchmark, not the synthetic demo. UCI's later <a href=\"https://archive.ics.uci.edu/dataset/573/south-german-credit-update\" target=\"_blank\">South German Credit update</a> says the widely used Statlog version has severe errors in its coding information and limited background. FairLens keeps Statlog for this existing educational workflow, so treat individual code interpretations and model findings cautiously; it is not reliable evidence about current applicants.",
+    "caution",
+)
+callout(
     "Two mistakes, very different costs",
     "The dataset's own cost matrix says calling a Bad-risk case Good costs <b>5</b>, while calling a Good-risk case Bad "
     "costs <b>1</b>. Every cost figure in this app uses that rule.",

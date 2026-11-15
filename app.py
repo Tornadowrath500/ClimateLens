@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import streamlit as st
+from fairlens.ui import theme_control
 
 
 st.set_page_config(
@@ -8,6 +9,8 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="auto",
 )
+
+theme_control()
 
 navigation = st.navigation(
     {

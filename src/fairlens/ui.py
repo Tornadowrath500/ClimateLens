@@ -61,11 +61,11 @@ html, body, .stApp { background: #07111f; color: var(--fl-ink); }
 .block-container { position: relative; z-index: 1; max-width: 1240px; padding-top: 2.4rem; padding-bottom: 4rem; }
 header[data-testid="stHeader"] { background: rgba(7,17,31,.72); }
 section[data-testid="stSidebar"] { position: relative; z-index: 1; background: linear-gradient(180deg, rgba(11,27,45,.98), rgba(7,17,31,.98)); border-right: 1px solid var(--fl-line); }
-[data-testid="stSidebarNav"] { padding-top: .5rem; }
-[data-testid="stSidebarNav"] li div[data-testid="stMarkdownContainer"] p { color: #7890a9; font: 600 .66rem/1.2 ui-monospace, Consolas, monospace; letter-spacing: .13em; }
-[data-testid="stSidebarNavLink"] { border-radius: 9px; margin: 2px 0; transition: background .2s ease, border-color .2s ease; }
+[data-testid="stSidebarNav"] { padding: .6rem .55rem 1rem; }
+[data-testid="stSidebarNav"] li div[data-testid="stMarkdownContainer"] p { color: #9aacc2; font: 700 .78rem/1.35 Inter, "Segoe UI", system-ui, sans-serif; letter-spacing: .045em; }
+[data-testid="stSidebarNavLink"] { box-sizing: border-box; min-height: 2.65rem; display: flex; align-items: center; border: 1px solid transparent; border-radius: 10px; margin: 3px 0; padding: .42rem .62rem; transition: background .2s ease, border-color .2s ease; }
 [data-testid="stSidebarNavLink"]:hover { background: rgba(66,221,179,.09); }
-[data-testid="stSidebarNavLink"] p { font-size: .89rem; }
+[data-testid="stSidebarNavLink"] p { font-size: .98rem; line-height: 1.3; letter-spacing: .01em; font-weight: 560; }
 h1, h2, h3, h4 { color: var(--fl-ink); letter-spacing: -.025em; font-weight: 650; }
 h1 { font-size: clamp(2.1rem, 4vw, 3.25rem) !important; line-height: 1.1; }
 h2 { line-height: 1.2; }
@@ -128,10 +128,58 @@ button, input, textarea, [role="combobox"] { border-radius: 9px !important; }
 </style>
 """
 
+LIGHT_MODE_CSS = """
+<style>
+:root { color-scheme: light; --fl-bg:#f2f6f8; --fl-panel:#fff; --fl-panel-2:#e7eff3;
+  --fl-ink:#172b3b; --fl-muted:#526b7e; --fl-line:#cbd9e2; --fl-mint:#087e68; --fl-cyan:#176b92; --fl-amber:#98620b; }
+html, body, .stApp { background:#f2f6f8; color:var(--fl-ink); }
+.stApp [data-testid="stMarkdownContainer"], .stApp label, .stApp [data-testid="stWidgetLabel"] p,
+.stApp [data-testid="stMetricLabel"], .stApp [data-testid="stMetricValue"] { color:var(--fl-ink); }
+.stApp [data-testid="stCaptionContainer"], .stApp .stCaption { color:var(--fl-muted); }
+.stApp { background-image:radial-gradient(ellipse at 75% -15%,rgba(38,145,171,.13),transparent 42%),
+  radial-gradient(ellipse at 5% 42%,rgba(29,141,112,.08),transparent 38%),linear-gradient(180deg,#f5f8fa 0%,#edf3f6 52%,#f2f6f8 100%); }
+.stApp::before { opacity:.16; background-image:linear-gradient(rgba(23,107,146,.15) 1px,transparent 1px),linear-gradient(90deg,rgba(23,107,146,.15) 1px,transparent 1px); }
+.stApp::after { background:linear-gradient(transparent,rgba(8,126,104,.035),transparent); }
+header[data-testid="stHeader"] { background:rgba(242,246,248,.82); }
+section[data-testid="stSidebar"] { background:linear-gradient(180deg,#f9fbfc,#eaf1f4); border-right-color:var(--fl-line); }
+[data-testid="stSidebarNav"] li div[data-testid="stMarkdownContainer"] p { color:#526b7e; }
+[data-testid="stSidebarNavLink"] { color:#243b4d; }
+[data-testid="stSidebarNavLink"]:hover { background:rgba(8,126,104,.09); border-color:rgba(8,126,104,.18); }
+[data-testid="stSidebarNavLink"][aria-current="page"] { background:#dceee9; border-color:#b6d9cf; }
+h1,h2,h3,h4 { color:var(--fl-ink); }
+.fl-eyebrow,.fl-section-kicker { color:#176b92; }
+.fl-hero { background:linear-gradient(120deg,#17334a,#19465a 58%,#17645b); }
+.fl-callout { background:rgba(255,255,255,.9); }
+.fl-card { background:linear-gradient(145deg,#fff,#f3f7f9); box-shadow:0 8px 24px rgba(29,58,77,.06); }
+.fl-flow-step { background:rgba(255,255,255,.86); }
+.fl-health-panel { background:linear-gradient(120deg,#fff,#edf5f6); }
+.fl-health-panel p { color:#40596c; }
+.fl-health-panel .fl-limit { background:rgba(152,98,11,.07); }
+[data-testid="stMetric"] { background:linear-gradient(145deg,#fff,#f3f7f9); }
+.fl-chip { color:#172b3b; }
+.fl-chip.good { color:#075d4d; background:#d9f2e9; }
+.fl-chip.bad,.fl-chip.demo { color:#744900; background:#fff0d2; }
+.fl-bar i { background:#172b3b; box-shadow:0 0 7px rgba(23,43,59,.3); }
+.fl-bar span { color:#40596c; }
+button, input, textarea, [role="combobox"] { color:var(--fl-ink); }
+[data-testid="stMetricValue"], [data-testid="stMetricLabel"], [data-testid="stWidgetLabel"] { color:var(--fl-ink); }
+</style>
+"""
+
 
 def setup_page(title: str) -> None:
     """Inject the shared UI skin; app.py configures the Streamlit page once."""
     st.markdown(CSS, unsafe_allow_html=True)
+    if st.session_state.get("fl_light_mode", False):
+        st.markdown(LIGHT_MODE_CSS, unsafe_allow_html=True)
+
+
+def theme_control() -> None:
+    """Show an app-wide appearance switch; Streamlit session state persists it across pages."""
+    if "fl_light_mode" not in st.session_state:
+        st.session_state["fl_light_mode"] = False
+    with st.sidebar:
+        st.toggle("Light mode", key="fl_light_mode", help="Switch the app appearance for this session.")
 
 
 def header(title: str, lede: str) -> None:
@@ -424,8 +472,14 @@ def contribution_chart(table: pd.DataFrame, top: int = 8, height: int = 330) -> 
         text=[f"{c:+.2f}" for c in t["contribution"]], textposition="outside",
         hovertemplate="%{y}<br>moves the score by %{x:+.3f}<extra></extra>",
     ))
-    fig.update_xaxes(title="← pushes toward Bad  |  pushes toward Good →", range=[-max(extent * 1.35, .1), max(extent * 1.35, .1)])
-    return style(fig, height)
+    fig.update_xaxes(
+        title={"text": "← pushes toward Bad<br>Pushes toward Good →", "standoff": 12},
+        range=[-max(extent * 1.35, .1), max(extent * 1.35, .1)],
+    )
+    fig = style(fig, height)
+    # Give the two-line direction label its own centered space below the ticks.
+    fig.update_layout(margin=dict(l=76, r=44, t=72, b=112))
+    return fig
 
 
 def card(title: str, body: str, eyebrow: str | None = None) -> None:
