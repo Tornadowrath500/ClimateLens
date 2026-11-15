@@ -25,8 +25,13 @@ def parse_complaint_summary(payload: dict[str, Any]) -> dict[str, Any]:
 
     aggregations = payload.get("aggregations")
     product = aggregations.get("product") if isinstance(aggregations, dict) else None
-    field = product.get("field") if isinstance(product, dict) else None
-    buckets = field.get("buckets") if isinstance(field, dict) else None
+    # The current live API nests buckets under the field name ("product"),
+    # while the published OpenAPI schema describes a generic "field" object.
+    # Accept both shapes so a schema rollout does not blank the page.
+    field_aggregation = product.get("product") if isinstance(product, dict) else None
+    if not isinstance(field_aggregation, dict) and isinstance(product, dict):
+        field_aggregation = product.get("field")
+    buckets = field_aggregation.get("buckets") if isinstance(field_aggregation, dict) else None
     if not isinstance(buckets, list):
         raise ValueError("The CFPB response did not include product aggregates.")
 
