@@ -32,6 +32,12 @@ from fairlens.models import MODEL_NAMES
 INK, GREEN, SAGE, AMBER, MUTED, LINE = "#e6f1ff", "#42ddb3", "#82a9b2", "#f2b84b", "#9aacc2", "#263c54"
 YOUNG, OLD = group_labels(AGE_GROUP_CUTOFF)
 GROUP_COLOR = {YOUNG: AMBER, OLD: GREEN}
+PROFILE_ACCENTS = {
+    "Mint": ("#42ddb3", "#61c9ff"),
+    "Sky": ("#61c9ff", "#9b8cff"),
+    "Amber": ("#f2b84b", "#61c9ff"),
+    "Violet": ("#b39aff", "#61c9ff"),
+}
 
 METRIC_HELP = {
     "accuracy": "Share of all applicants the model labelled correctly. Misleading when errors cost different amounts.",
@@ -125,6 +131,22 @@ button, input, textarea, [role="combobox"] { border-radius: 9px !important; }
 @media (max-width: 850px) { .fl-flow { grid-template-columns: repeat(2, minmax(0,1fr)); } .fl-flow-step:last-child { grid-column: 1 / -1; } }
 @media (max-width: 520px) { .block-container { padding-top: 1.3rem; } .fl-health-panel { grid-template-columns: 1fr; } .fl-flow { grid-template-columns: 1fr 1fr; } .fl-hero-meta { gap: .45rem .8rem; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+
+/* Streamlit shell refinement: align native page icons and keep appearance controls legible. */
+[data-testid="stSidebarNavLink"] { display:flex !important; align-items:center !important; gap:.65rem !important; padding:.48rem .72rem !important; }
+[data-testid="stSidebarNavLink"] > span:first-child { width:1.35rem !important; min-width:1.35rem !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; margin:0 !important; opacity:1 !important; }
+[data-testid="stSidebarNavLink"] [data-testid="stMarkdownContainer"] { display:flex !important; align-items:center !important; min-height:1.5rem !important; }
+[data-testid="stSidebarNavLink"] p { margin:0 !important; line-height:1.35 !important; text-align:left !important; }
+[data-testid="stSidebarNavLink"][aria-current="page"] { border-color:rgba(66,221,179,.42) !important; background:rgba(66,221,179,.12) !important; }
+[data-testid="stSidebar"] [data-testid="stToggle"] { padding:.45rem .65rem !important; border:1px solid var(--fl-line) !important; border-radius:10px !important; background:var(--fl-panel) !important; }
+[data-testid="stSidebar"] [data-testid="stToggle"] label,
+[data-testid="stSidebar"] [data-testid="stToggle"] label p { color:var(--fl-ink) !important; font-weight:650 !important; opacity:1 !important; }
+[data-testid="stSidebar"] [data-testid="stToggle"] [role="switch"] { opacity:1 !important; }
+
+.fl-dashboard-callout { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(17rem,.85fr); gap:1.5rem; align-items:center; padding:1.35rem 1.5rem; margin:.4rem 0 1.4rem; border:1px solid rgba(97,201,255,.3); border-radius:16px; background:linear-gradient(115deg,rgba(12,36,54,.96),rgba(14,61,64,.72)); box-shadow:0 16px 44px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.04); }
+.fl-dashboard-callout h3 { margin:.35rem 0; font-size:1.3rem; }
+.fl-dashboard-callout p { margin:0; color:var(--fl-muted); line-height:1.55; }
+@media(max-width:760px) { .fl-dashboard-callout { grid-template-columns:1fr; } }
 </style>
 """
 
@@ -172,6 +194,12 @@ def setup_page(title: str) -> None:
     st.markdown(CSS, unsafe_allow_html=True)
     if st.session_state.get("fl_light_mode", False):
         st.markdown(LIGHT_MODE_CSS, unsafe_allow_html=True)
+    profile = st.session_state.get("fl_profile", {})
+    accent, secondary = PROFILE_ACCENTS.get(profile.get("accent", "Mint"), PROFILE_ACCENTS["Mint"])
+    st.markdown(
+        f"<style>:root{{--fl-mint:{accent};--fl-cyan:{secondary};}}</style>",
+        unsafe_allow_html=True,
+    )
 
 
 def theme_control() -> None:

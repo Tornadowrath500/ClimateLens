@@ -5,7 +5,8 @@ from fairlens.ui import theme_control
 
 
 st.set_page_config(
-    page_icon="◈",
+    page_title="FairLens · Model audit",
+    page_icon="assets/fairlens-mark.svg",
     layout="wide",
     initial_sidebar_state="auto",
 )
@@ -16,6 +17,8 @@ navigation = st.navigation(
     {
         "START": [
             st.Page("pages/0_Home.py", title="Home", icon=":material/home:", default=True),
+            st.Page("pages/12_Profile.py", title="Optional profile", icon=":material/account_circle:"),
+            st.Page("pages/13_Tutorial.py", title="Take the tour", icon=":material/auto_awesome:"),
         ],
         "REVIEW THE MODEL": [
             st.Page("pages/1_Understand_the_Data.py", title="Data & scope", icon=":material/database:"),
@@ -23,6 +26,7 @@ navigation = st.navigation(
             st.Page("pages/3_Investigate_Group_Outcomes.py", title="Group outcomes", icon=":material/groups:"),
             st.Page("pages/14_Hidden_Bias_Challenge.py", title="Hidden bias challenge", icon=":material/quiz:"),
             st.Page("pages/5_Findings_and_Report.py", title="Findings & report", icon=":material/description:"),
+            st.Page("pages/15_Claim_Checker.py", title="Claim checker", icon=":material/rule:"),
             st.Page("pages/6_Methodology_and_Limitations.py", title="Methods & limits", icon=":material/science:"),
         ],
         "EXPLORE & TEST": [
@@ -32,6 +36,7 @@ navigation = st.navigation(
             st.Page("pages/4_Experiment_Lab.py", title="Experiment lab", icon=":material/science:"),
             st.Page("pages/10_Mitigation_Lab.py", title="Mitigation lab", icon=":material/compare_arrows:"),
             st.Page("pages/11_Audit_Your_Model.py", title="Audit your model", icon=":material/fact_check:"),
+            st.Page("pages/14_Health_Equity_Lab.py", title="Health equity lab", icon=":material/health_metrics:"),
         ],
     },
     position="sidebar",
