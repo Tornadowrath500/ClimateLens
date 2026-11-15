@@ -50,7 +50,7 @@ summary = terrain_summary(t)
 
 COLORS = {
     "Age group": {YOUNG: AMBER, OLD: GREEN},
-    "Mistakes": {KIND_OK: SAGE, KIND_FALSE_GOOD: "#b3261e", KIND_FALSE_BAD: AMBER},
+    "Mistakes": {KIND_OK: SAGE, KIND_FALSE_GOOD: "#ff766e", KIND_FALSE_BAD: AMBER},
     "Actual label": {True: GREEN, False: AMBER},
 }
 if colour_by == "Model score":
@@ -106,9 +106,11 @@ fig.update_layout(
     ),
 )
 try:
-    event = st.plotly_chart(fig, theme=None, width="stretch", on_select="rerun", selection_mode="points", key="applicant_map")
+    event = st.plotly_chart(fig, theme=None, width="stretch", config={"responsive": True, "displaylogo": False},
+                            on_select="rerun", selection_mode="points", key="applicant_map")
 except TypeError:
-    event = st.plotly_chart(fig, theme=None, use_container_width=True, on_select="rerun", selection_mode="points", key="applicant_map")
+    event = st.plotly_chart(fig, theme=None, use_container_width=True, config={"responsive": True, "displaylogo": False},
+                            on_select="rerun", selection_mode="points", key="applicant_map")
 
 legend = {"Model score": "Colour = model's score for Good (amber low, green high)",
           "Age group": f"Amber = {YOUNG}, green = {OLD}", "Mistakes": "Red = costly mistake, amber = turned away wrongly, sage = correct",

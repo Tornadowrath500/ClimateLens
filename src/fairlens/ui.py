@@ -29,7 +29,7 @@ from fairlens.demo import make_demo_dataset
 from fairlens.evaluation import Audit, OperatingPoint, run_audit
 from fairlens.models import MODEL_NAMES
 
-INK, GREEN, SAGE, AMBER, MUTED, LINE = "#1f2d28", "#2f5d50", "#9db5a8", "#b7791f", "#5d6b65", "#e2e0d6"
+INK, GREEN, SAGE, AMBER, MUTED, LINE = "#e6f1ff", "#42ddb3", "#82a9b2", "#f2b84b", "#9aacc2", "#263c54"
 YOUNG, OLD = group_labels(AGE_GROUP_CUTOFF)
 GROUP_COLOR = {YOUNG: AMBER, OLD: GREEN}
 
@@ -43,47 +43,94 @@ METRIC_HELP = {
     "auc": "How well the model ranks Good above Bad cases regardless of threshold. 0.5 is a coin flip, 1.0 is perfect ranking.",
 }
 
-CSS = f"""
+CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600&display=swap');
-html, body, .stApp, [data-testid="stMarkdownContainer"] {{ font-family: 'Public Sans', system-ui, -apple-system, 'Segoe UI', sans-serif; }}
-h1, h2, h3, h4 {{ font-family: 'Newsreader', Georgia, 'Times New Roman', serif !important; color: {INK}; letter-spacing: -0.01em; font-weight: 600; }}
-h1 {{ font-size: 2.5rem !important; line-height: 1.12; }}
-.block-container {{ max-width: 1080px; padding-top: 2.6rem; padding-bottom: 4rem; }}
-.fl-lede {{ color: {MUTED}; font-size: 1.12rem; line-height: 1.65; max-width: 46rem; margin: .2rem 0 1.4rem; }}
-.fl-callout {{ border: 1px solid {LINE}; border-left: 4px solid {GREEN}; background: rgba(255,255,255,.7);
-  border-radius: 8px; padding: .9rem 1.1rem; margin: .6rem 0 1.1rem; color: {INK}; line-height: 1.55; }}
-.fl-callout.caution {{ border-left-color: {AMBER}; }}
-.fl-callout strong {{ display: block; margin-bottom: .15rem; }}
-.fl-step {{ display: flex; gap: 1rem; padding: .85rem 0; border-top: 1px solid {LINE}; }}
-.fl-step:last-child {{ border-bottom: 1px solid {LINE}; }}
-.fl-step b {{ font-family: 'Newsreader', Georgia, serif; font-size: 1.5rem; color: {GREEN}; min-width: 1.6rem; }}
-.fl-step span {{ color: {MUTED}; }}
-.fl-group {{ border: 1px solid {LINE}; border-radius: 8px; padding: .9rem 1.1rem; background: rgba(255,255,255,.7); }}
-.fl-group .n {{ font-family: 'Newsreader', Georgia, serif; font-size: 2rem; color: {INK}; line-height: 1.1; }}
-[data-testid="stMetric"] {{ background: rgba(255,255,255,.7); border: 1px solid {LINE}; border-radius: 8px; padding: .7rem .9rem; }}
-.fl-hero {{ background: linear-gradient(135deg, {GREEN} 0%, #1f4237 100%); color: #f7f5ef; border-radius: 14px; padding: 1.6rem 1.8rem; margin: .2rem 0 1.2rem; }}
-.fl-hero h2 {{ color: #f7f5ef !important; margin: 0 0 .3rem; }}
-.fl-hero p {{ color: #dfe8e2; margin: 0; max-width: 46rem; line-height: 1.6; }}
-.fl-card {{ border: 1px solid {LINE}; border-radius: 12px; padding: 1rem 1.1rem; background: rgba(255,255,255,.75); height: 100%; }}
-.fl-card h4 {{ margin: 0 0 .25rem; font-size: 1.15rem; }}
-.fl-card p {{ color: {MUTED}; margin: 0; font-size: .93rem; line-height: 1.5; }}
-.fl-chip {{ display: inline-block; padding: .12rem .6rem; border-radius: 999px; font-size: .78rem; font-weight: 600; margin-right: .35rem; border: 1px solid {LINE}; background: #fff; }}
-.fl-chip.good {{ background: #e3f0e9; color: {GREEN}; border-color: #b9d3c6; }}
-.fl-chip.bad {{ background: #f6e8d2; color: #8a5a12; border-color: #e5cfa6; }}
-.fl-chip.demo {{ background: #fff3cd; color: #7a5b00; border-color: #ecd98a; }}
-.fl-bar {{ position: relative; height: 16px; border-radius: 8px; background: linear-gradient(90deg, #f1dfbf, #e8ece6 50%, #bcd6c9); border: 1px solid {LINE}; margin: .5rem 0 1.4rem; }}
-.fl-bar i {{ position: absolute; top: -5px; width: 4px; height: 24px; background: {INK}; border-radius: 2px; }}
-.fl-bar u {{ position: absolute; top: -5px; width: 0; height: 24px; border-left: 2px dashed {AMBER}; text-decoration: none; }}
-.fl-bar span {{ position: absolute; top: 20px; font-size: .72rem; color: {MUTED}; transform: translateX(-50%); white-space: nowrap; }}
-@media (prefers-reduced-motion: reduce) {{ * {{ animation: none !important; transition: none !important; }} }}
+:root { color-scheme: dark; --fl-bg: #07111f; --fl-panel: #0c1a2b; --fl-panel-2: #102239;
+  --fl-ink: #e6f1ff; --fl-muted: #9aacc2; --fl-line: #263c54; --fl-mint: #42ddb3; --fl-cyan: #61c9ff; --fl-amber: #f2b84b; }
+html, body, .stApp, [data-testid="stMarkdownContainer"] { font-family: Inter, "Segoe UI", system-ui, sans-serif; }
+html, body, .stApp { background: #07111f; color: var(--fl-ink); }
+.stApp { background-image: radial-gradient(ellipse at 70% -15%, rgba(42, 116, 143, .19), transparent 42%),
+  radial-gradient(ellipse at 5% 42%, rgba(36, 110, 101, .12), transparent 38%), linear-gradient(180deg, #07111f 0%, #091727 48%, #07111f 100%); }
+.stApp::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .28;
+  background-image: linear-gradient(rgba(97,201,255,.16) 1px, transparent 1px), linear-gradient(90deg, rgba(97,201,255,.16) 1px, transparent 1px);
+  background-size: 44px 44px; animation: fl-grid-drift 36s linear infinite; mask-image: linear-gradient(to bottom, black, transparent 88%); }
+.stApp::after { content: ""; position: fixed; inset: -100% 0 auto; height: 32vh; z-index: 0; pointer-events: none;
+  background: linear-gradient(transparent, rgba(66,221,179,.045), transparent); animation: fl-scan 18s linear infinite; }
+@keyframes fl-grid-drift { to { background-position: 0 22px, 22px 0; } }
+@keyframes fl-scan { to { transform: translateY(450vh); } }
+.block-container { position: relative; z-index: 1; max-width: 1240px; padding-top: 2.4rem; padding-bottom: 4rem; }
+header[data-testid="stHeader"] { background: rgba(7,17,31,.72); }
+section[data-testid="stSidebar"] { position: relative; z-index: 1; background: linear-gradient(180deg, rgba(11,27,45,.98), rgba(7,17,31,.98)); border-right: 1px solid var(--fl-line); }
+[data-testid="stSidebarNav"] { padding-top: .5rem; }
+[data-testid="stSidebarNav"] li div[data-testid="stMarkdownContainer"] p { color: #7890a9; font: 600 .66rem/1.2 ui-monospace, Consolas, monospace; letter-spacing: .13em; }
+[data-testid="stSidebarNavLink"] { border-radius: 9px; margin: 2px 0; transition: background .2s ease, border-color .2s ease; }
+[data-testid="stSidebarNavLink"]:hover { background: rgba(66,221,179,.09); }
+[data-testid="stSidebarNavLink"] p { font-size: .89rem; }
+h1, h2, h3, h4 { color: var(--fl-ink); letter-spacing: -.025em; font-weight: 650; }
+h1 { font-size: clamp(2.1rem, 4vw, 3.25rem) !important; line-height: 1.1; }
+h2 { line-height: 1.2; }
+.fl-lede { color: var(--fl-muted); font-size: 1.08rem; line-height: 1.7; max-width: 52rem; margin: .25rem 0 1.4rem; }
+.fl-eyebrow, .fl-section-kicker { color: var(--fl-cyan); font: 650 .68rem/1.4 ui-monospace, Consolas, monospace; letter-spacing: .15em; }
+.fl-section-kicker { margin: 2.2rem 0 .45rem; }
+.fl-pulse { display: inline-block; width: .5rem; height: .5rem; margin-right: .45rem; border-radius: 50%; background: var(--fl-mint); box-shadow: 0 0 14px rgba(66,221,179,.9); }
+.fl-hero { position: relative; overflow: hidden; border: 1px solid rgba(97,201,255,.24); border-radius: 20px; padding: clamp(1.45rem, 4vw, 3rem);
+  margin: .2rem 0 1.25rem; background: linear-gradient(120deg, rgba(13,34,55,.97), rgba(10,29,45,.82) 58%, rgba(13,53,60,.62));
+  box-shadow: 0 20px 70px rgba(0,0,0,.22), inset 0 1px rgba(255,255,255,.04); }
+.fl-hero::after { content: "◈"; position: absolute; right: 4%; top: 50%; transform: translateY(-50%); color: rgba(97,201,255,.08); font-size: clamp(8rem, 23vw, 19rem); line-height: 1; pointer-events: none; }
+.fl-hero h1 { position: relative; z-index: 1; max-width: 48rem; margin: .65rem 0 .6rem; }
+.fl-hero p { position: relative; z-index: 1; color: #bacadd; max-width: 48rem; margin: 0; font-size: 1.04rem; line-height: 1.7; }
+.fl-hero-meta { display: flex; flex-wrap: wrap; gap: .65rem 1.4rem; margin-top: 1.5rem; color: #7899b2; font: 600 .65rem/1.4 ui-monospace, Consolas, monospace; letter-spacing: .12em; }
+.fl-callout { border: 1px solid var(--fl-line); border-left: 3px solid var(--fl-mint); background: rgba(12,26,43,.88); border-radius: 10px; padding: .9rem 1.1rem; margin: .65rem 0 1.1rem; color: var(--fl-ink); line-height: 1.65; }
+.fl-callout.caution { border-left-color: var(--fl-amber); }
+.fl-callout strong { display: block; margin-bottom: .2rem; }
+.fl-card { box-sizing: border-box; min-height: 196px; border: 1px solid var(--fl-line); border-radius: 14px; padding: 1rem 1.05rem; margin-bottom: .55rem;
+  background: linear-gradient(145deg, rgba(16,34,57,.92), rgba(10,25,41,.93)); box-shadow: inset 0 1px rgba(255,255,255,.025); transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.fl-card:hover { transform: translateY(-3px); border-color: rgba(66,221,179,.48); box-shadow: 0 12px 28px rgba(0,0,0,.2); }
+.fl-card .fl-card-id { color: var(--fl-cyan); font: 650 .65rem/1.2 ui-monospace, Consolas, monospace; letter-spacing: .13em; }
+.fl-card h4 { margin: .55rem 0 .38rem; font-size: 1.04rem; }
+.fl-card p { color: var(--fl-muted); margin: 0; font-size: .89rem; line-height: 1.55; }
+.fl-flow { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: .65rem; }
+.fl-flow-step { min-width: 0; display: flex; flex-direction: column; gap: .38rem; padding: .85rem .9rem; border: 1px solid var(--fl-line); border-radius: 12px; background: rgba(12,26,43,.7); }
+.fl-flow-step span { color: var(--fl-mint); font: 650 .66rem/1.3 ui-monospace, Consolas, monospace; }
+.fl-flow-step strong { font-size: .9rem; }
+.fl-flow-step small { color: var(--fl-muted); line-height: 1.45; }
+.fl-health-panel { display: grid; grid-template-columns: 2.4rem minmax(0,1fr); gap: 1rem; padding: clamp(1rem,3vw,1.5rem); border: 1px solid rgba(97,201,255,.2); border-radius: 16px; background: linear-gradient(120deg, rgba(14,33,53,.94), rgba(11,27,44,.82)); }
+.fl-health-icon { display: grid; place-items: center; width: 2.2rem; height: 2.2rem; border: 1px solid rgba(66,221,179,.4); border-radius: 10px; color: var(--fl-mint); box-shadow: 0 0 24px rgba(66,221,179,.1); }
+.fl-health-panel h3 { margin: .25rem 0 .5rem; font-size: 1.22rem; }
+.fl-health-panel p { color: #b5c5d7; line-height: 1.65; }
+.fl-health-panel .fl-limit { padding: .8rem .9rem; border-left: 2px solid var(--fl-amber); border-radius: 0 8px 8px 0; background: rgba(242,184,75,.06); font-size: .9rem; }
+.fl-health-panel a { color: var(--fl-cyan); text-decoration: none; }
+.fl-health-panel a:hover { text-decoration: underline; }
+.fl-source-sep { color: var(--fl-muted); margin: 0 .5rem; }
+.fl-step { display: flex; gap: 1rem; padding: .85rem 0; border-top: 1px solid var(--fl-line); }
+.fl-step:last-child { border-bottom: 1px solid var(--fl-line); }
+.fl-step b { font: 650 1.4rem/1.2 ui-monospace, Consolas, monospace; color: var(--fl-mint); min-width: 1.6rem; }
+.fl-step span, .stCaption, [data-testid="stCaptionContainer"] { color: var(--fl-muted); }
+.fl-group { border: 1px solid var(--fl-line); border-radius: 10px; padding: .9rem 1.1rem; background: var(--fl-panel); }
+.fl-group .n { font: 650 2rem/1.1 ui-monospace, Consolas, monospace; color: var(--fl-ink); }
+[data-testid="stMetric"] { background: linear-gradient(145deg, rgba(16,34,57,.94), rgba(10,25,41,.94)); border: 1px solid var(--fl-line); border-radius: 12px; padding: .75rem .9rem; }
+[data-testid="stMetricValue"] { color: var(--fl-ink); }
+[data-testid="stDataFrame"], [data-testid="stTable"] { border: 1px solid var(--fl-line); border-radius: 10px; overflow: hidden; }
+.fl-chip { display: inline-block; padding: .14rem .62rem; border-radius: 999px; font-size: .78rem; font-weight: 650; margin-right: .35rem; border: 1px solid var(--fl-line); background: var(--fl-panel-2); color: var(--fl-ink); }
+.fl-chip.good { background: rgba(66,221,179,.12); color: #83f1d3; border-color: rgba(66,221,179,.38); }
+.fl-chip.bad { background: rgba(242,184,75,.12); color: #ffd27a; border-color: rgba(242,184,75,.36); }
+.fl-chip.demo { background: rgba(242,184,75,.12); color: #ffd27a; border-color: rgba(242,184,75,.36); }
+.fl-bar { position: relative; height: 16px; border-radius: 8px; background: linear-gradient(90deg, #b7791f, #31445a 50%, #42ddb3); border: 1px solid var(--fl-line); margin: .6rem 0 1.5rem; }
+.fl-bar i { position: absolute; top: -5px; width: 4px; height: 24px; background: var(--fl-ink); border-radius: 2px; box-shadow: 0 0 7px rgba(230,241,255,.7); }
+.fl-bar u { position: absolute; top: -5px; width: 0; height: 24px; border-left: 2px dashed var(--fl-amber); text-decoration: none; }
+.fl-bar span { position: absolute; top: 20px; font-size: .72rem; color: var(--fl-muted); transform: translateX(-50%); white-space: nowrap; }
+[data-testid="stBaseButton-primary"] { box-shadow: 0 0 24px rgba(66,221,179,.12); }
+button, input, textarea, [role="combobox"] { border-radius: 9px !important; }
+:focus-visible { outline: 2px solid var(--fl-cyan) !important; outline-offset: 2px !important; }
+@media (max-width: 850px) { .fl-flow { grid-template-columns: repeat(2, minmax(0,1fr)); } .fl-flow-step:last-child { grid-column: 1 / -1; } }
+@media (max-width: 520px) { .block-container { padding-top: 1.3rem; } .fl-health-panel { grid-template-columns: 1fr; } .fl-flow { grid-template-columns: 1fr 1fr; } .fl-hero-meta { gap: .45rem .8rem; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 </style>
 """
 
 
 def setup_page(title: str) -> None:
-    """Must be the first Streamlit call on every page."""
-    st.set_page_config(page_title=f"{title} | FairLens", page_icon="◈", layout="wide")
+    """Inject the shared UI skin; app.py configures the Streamlit page once."""
     st.markdown(CSS, unsafe_allow_html=True)
 
 
@@ -100,9 +147,9 @@ def callout(title: str, body: str, kind: str = "note") -> None:
 
 def show_chart(fig: go.Figure) -> None:
     try:
-        st.plotly_chart(fig, theme=None, width="stretch")
+        st.plotly_chart(fig, theme=None, width="stretch", config={"responsive": True, "displaylogo": False})
     except TypeError:  # older Streamlit
-        st.plotly_chart(fig, theme=None, use_container_width=True)
+        st.plotly_chart(fig, theme=None, use_container_width=True, config={"responsive": True, "displaylogo": False})
 
 
 def show_table(frame: pd.DataFrame, **kwargs) -> None:
@@ -114,12 +161,13 @@ def show_table(frame: pd.DataFrame, **kwargs) -> None:
 
 def style(fig: go.Figure, height: int = 340) -> go.Figure:
     fig.update_layout(
-        height=height, margin=dict(l=10, r=10, t=40, b=10), paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)", font=dict(family="Public Sans, system-ui, sans-serif", color=INK, size=13),
-        legend=dict(orientation="h", y=-0.2),
+        height=height, margin=dict(l=76, r=44, t=72, b=86), paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(9,22,37,.72)", font=dict(family="Inter, Segoe UI, system-ui, sans-serif", color=INK, size=13),
+        hoverlabel=dict(bgcolor="#102239", bordercolor=LINE, font=dict(color=INK, size=12)),
+        legend=dict(orientation="h", y=-0.24, yanchor="top", x=0),
     )
-    fig.update_xaxes(gridcolor=LINE, zeroline=False)
-    fig.update_yaxes(gridcolor=LINE, zeroline=False)
+    fig.update_xaxes(gridcolor=LINE, zeroline=False, automargin=True, title_standoff=14, tickfont=dict(color=MUTED))
+    fig.update_yaxes(gridcolor=LINE, zeroline=False, automargin=True, title_standoff=14, tickfont=dict(color=MUTED))
     return fig
 
 
@@ -133,18 +181,17 @@ class Settings:
 def sidebar() -> Settings:
     """Same widgets, same keys on every page, so choices persist while navigating."""
     with st.sidebar:
-        st.markdown("### Model settings")
-        model = st.radio(
-            "Model", MODEL_NAMES, key="model_name",
-            help="Compare models on the validation set (page 2). The test set is for a final look only.",
-        )
-        st.caption("Inputs the model may use")
-        use_age = st.checkbox("Age", value=True, key="use_age")
-        use_status = st.checkbox("Personal status and sex", value=True, key="use_status")
-        st.caption(
-            "Unticking an input removes it from the model. Related features can still "
-            "carry the same information, so check whether the group gap actually moves."
-        )
+        with st.expander("Global model controls", expanded=False):
+            model = st.radio(
+                "Model used in this review", MODEL_NAMES, key="model_name",
+                help="Compare models on Model performance. Keep the final test set for a deliberate final review.",
+            )
+            st.caption("INPUTS THE MODEL MAY USE")
+            use_age = st.checkbox("Age", value=True, key="use_age")
+            use_status = st.checkbox("Personal status and sex", value=True, key="use_status")
+            st.caption(
+                "Removing an input does not remove information carried by related features. Check whether the group gap moves."
+            )
     excluded = tuple(c for c, keep in ((AGE_COLUMN, use_age), (PERSONAL_STATUS_COLUMN, use_status)) if not keep)
     return Settings(model=model, excluded=excluded)
 
@@ -173,7 +220,7 @@ def _demo() -> pd.DataFrame:
 
 def demo_banner() -> None:
     st.markdown(
-        '<span class="fl-chip demo">SYNTHETIC DEMO DATA</span> <span style="color:#7a5b00;font-size:.85rem">'
+        '<span class="fl-chip demo">SYNTHETIC DEMO DATA</span> <span style="color:#f2b84b;font-size:.85rem">'
         "Invented records with the German Credit layout, for exploring the tools offline. Not real evidence; "
         "download the real benchmark on the data page for genuine results.</span>",
         unsafe_allow_html=True,
@@ -290,7 +337,8 @@ def confusion_chart(matrix: list[list[int]]) -> go.Figure:
     fig = go.Figure(
         go.Heatmap(
             z=matrix, x=["Model says Good", "Model says Bad"], y=["Label is Good", "Label is Bad"],
-            text=text, texttemplate="%{text}", colorscale=[[0, "#eef2ee"], [1, SAGE]], showscale=False,
+            text=text, texttemplate="%{text}", textfont=dict(color=INK, size=13),
+            colorscale=[[0, "#102239"], [1, "#185a56"]], showscale=False,
             hoverinfo="skip", xgap=3, ygap=3,
         )
     )
@@ -307,7 +355,8 @@ def cost_chart(table: pd.DataFrame) -> go.Figure:
         )
     )
     fig.update_yaxes(autorange="reversed")
-    fig.update_xaxes(title="Average cost per applicant (lower is better)", rangemode="tozero")
+    max_cost = float(table["cost_per_applicant"].max())
+    fig.update_xaxes(title="Average cost per applicant (lower is better)", range=[0, max(max_cost * 1.22, 1.0)])
     return style(fig, 260)
 
 
@@ -325,14 +374,19 @@ def sweep_chart(sweep: pd.DataFrame, marks: dict[str, float]) -> go.Figure:
                                  line=dict(color=GROUP_COLOR[g], width=2.5, dash="dash" if g == YOUNG else "solid"), name=g),
                       row=2, col=1)
     styles = {"Your setting": (GREEN, "solid"), "Best on validation": (AMBER, "dot"), "Theory (5/6)": (MUTED, "dot")}
-    for label, x in marks.items():
+    for i, (label, x) in enumerate(marks.items()):
         color, dash = styles.get(label, (MUTED, "dot"))
         for r in (1, 2):
             fig.add_vline(x=x, line=dict(color=color, dash=dash, width=1.5), row=r, col=1)
-        fig.add_annotation(x=x, y=1.0, yref="paper", text=label, showarrow=False, font=dict(color=color, size=11), yanchor="bottom")
+        fig.add_annotation(
+            x=x, y=1.0, yref="paper", yshift=8 + i * 17, text=label,
+            showarrow=False, font=dict(color=color, size=11), yanchor="bottom",
+        )
     fig.update_xaxes(title="Decision threshold: classify Good when P(Good) is at least this", row=2, col=1)
     fig.update_yaxes(tickformat=".0%", row=2, col=1)
-    return style(fig, 520)
+    style(fig, 520)
+    fig.update_layout(margin=dict(l=84, r=44, t=110, b=94))
+    return fig
 
 
 def stability_chart(runs: dict[str, pd.DataFrame]) -> go.Figure:
@@ -363,18 +417,20 @@ def decision_chip(p: float, threshold: float) -> str:
 
 def contribution_chart(table: pd.DataFrame, top: int = 8, height: int = 330) -> go.Figure:
     t = table.head(top).iloc[::-1]
+    extent = float(t["contribution"].abs().max()) if not t.empty else 0.1
     fig = go.Figure(go.Bar(
         x=t["contribution"], y=[f"{f}: {v}" for f, v in zip(t["feature"], t["value"])], orientation="h",
         marker_color=[GREEN if c >= 0 else AMBER for c in t["contribution"]],
         text=[f"{c:+.2f}" for c in t["contribution"]], textposition="outside",
         hovertemplate="%{y}<br>moves the score by %{x:+.3f}<extra></extra>",
     ))
-    fig.update_xaxes(title="← pushes toward Bad  |  pushes toward Good →")
+    fig.update_xaxes(title="← pushes toward Bad  |  pushes toward Good →", range=[-max(extent * 1.35, .1), max(extent * 1.35, .1)])
     return style(fig, height)
 
 
-def card(title: str, body: str) -> None:
-    st.markdown(f'<div class="fl-card"><h4>{title}</h4><p>{body}</p></div>', unsafe_allow_html=True)
+def card(title: str, body: str, eyebrow: str | None = None) -> None:
+    mark = f'<div class="fl-card-id">{eyebrow}</div>' if eyebrow else ""
+    st.markdown(f'<div class="fl-card">{mark}<h4>{title}</h4><p>{body}</p></div>', unsafe_allow_html=True)
 
 
 def friendly_profile(row: pd.DataFrame) -> pd.DataFrame:
