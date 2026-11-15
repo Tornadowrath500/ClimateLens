@@ -472,8 +472,14 @@ def contribution_chart(table: pd.DataFrame, top: int = 8, height: int = 330) -> 
         text=[f"{c:+.2f}" for c in t["contribution"]], textposition="outside",
         hovertemplate="%{y}<br>moves the score by %{x:+.3f}<extra></extra>",
     ))
-    fig.update_xaxes(title="← pushes toward Bad  |  pushes toward Good →", range=[-max(extent * 1.35, .1), max(extent * 1.35, .1)])
-    return style(fig, height)
+    fig.update_xaxes(
+        title={"text": "← pushes toward Bad<br>Pushes toward Good →", "standoff": 12},
+        range=[-max(extent * 1.35, .1), max(extent * 1.35, .1)],
+    )
+    fig = style(fig, height)
+    # Give the two-line direction label its own centered space below the ticks.
+    fig.update_layout(margin=dict(l=76, r=44, t=72, b=112))
+    return fig
 
 
 def card(title: str, body: str, eyebrow: str | None = None) -> None:
