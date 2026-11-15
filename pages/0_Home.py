@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import streamlit as st
 
-from fairlens.config import dataset_path
+from fairlens.config import dataset_path, TARGET_COLUMN
+from fairlens.data import load_dataset
 from fairlens.ui import callout, card, demo_active, demo_banner, header, setup_page
 
 
@@ -17,6 +18,40 @@ st.markdown(
     '</section>',
     unsafe_allow_html=True,
 )
+
+if dataset_path().exists() and not demo_active():
+    snapshot = load_dataset()
+    records = len(snapshot)
+    features = snapshot.shape[1] - 1
+    source_label = "Historic UCI benchmark"
+elif demo_active():
+    records, features, source_label = 1000, 20, "Synthetic demo"
+else:
+    records, features, source_label = 0, 20, "Dataset not loaded"
+
+st.markdown('<div class="fl-section-kicker">AUDIT WORKSPACE / START HERE</div>', unsafe_allow_html=True)
+m1, m2, m3 = st.columns([1, 1, 2], gap="medium")
+with m1:
+    st.metric("Records in view", f"{records:,}" if records else "Not loaded")
+with m2:
+    st.metric("Input features", f"{features}")
+with m3:
+    st.metric("Evidence source", source_label, help="FairLens uses a historic credit benchmark or clearly labeled synthetic examples; it does not sync current applicant data.")
+st.markdown(
+    '<section class="fl-dashboard-callout"><div><span class="fl-eyebrow">YOUR FIRST 3 MINUTES</span>'
+    '<h3>Start with the evidence. Leave with a careful claim.</h3>'
+    '<p>Understand the benchmark, inspect model errors, then compare group outcomes before exploring changes.</p></div></section>',
+    unsafe_allow_html=True,
+)
+quick = st.columns(4, gap="small")
+for col, path, label, icon in zip(
+    quick,
+    ["pages/1_Understand_the_Data.py", "pages/2_Evaluate_the_Model.py", "pages/3_Investigate_Group_Outcomes.py", "pages/15_Claim_Checker.py"],
+    ["01 · Data", "02 · Performance", "03 · Groups", "04 · Claim check"],
+    [":material/database:", ":material/monitoring:", ":material/groups:", ":material/rule:"],
+):
+    with col:
+        st.page_link(path, label=label, icon=icon)
 
 callout(
     "A research and learning tool",

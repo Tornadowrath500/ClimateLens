@@ -142,6 +142,11 @@ button, input, textarea, [role="combobox"] { border-radius: 9px !important; }
 [data-testid="stSidebar"] [data-testid="stToggle"] label,
 [data-testid="stSidebar"] [data-testid="stToggle"] label p { color:var(--fl-ink) !important; font-weight:650 !important; opacity:1 !important; }
 [data-testid="stSidebar"] [data-testid="stToggle"] [role="switch"] { opacity:1 !important; }
+
+.fl-dashboard-callout { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(17rem,.85fr); gap:1.5rem; align-items:center; padding:1.35rem 1.5rem; margin:.4rem 0 1.4rem; border:1px solid rgba(97,201,255,.3); border-radius:16px; background:linear-gradient(115deg,rgba(12,36,54,.96),rgba(14,61,64,.72)); box-shadow:0 16px 44px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.04); }
+.fl-dashboard-callout h3 { margin:.35rem 0; font-size:1.3rem; }
+.fl-dashboard-callout p { margin:0; color:var(--fl-muted); line-height:1.55; }
+@media(max-width:760px) { .fl-dashboard-callout { grid-template-columns:1fr; } }
 </style>
 """
 

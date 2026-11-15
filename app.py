@@ -16,8 +16,8 @@ theme_control()
 navigation = st.navigation(
     {
         "START": [
-            st.Page("pages/12_Profile.py", title="Sign up / log in", icon=":material/account_circle:", default=True),
-            st.Page("pages/0_Home.py", title="Home", icon=":material/home:"),
+            st.Page("pages/0_Home.py", title="Home", icon=":material/home:", default=True),
+            st.Page("pages/12_Profile.py", title="Optional profile", icon=":material/account_circle:"),
             st.Page("pages/13_Tutorial.py", title="Take the tour", icon=":material/auto_awesome:"),
         ],
         "REVIEW THE MODEL": [
