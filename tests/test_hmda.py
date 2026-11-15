@@ -1,3 +1,5 @@
+import pytest
+
 from fairlens.hmda import HMDA_API_BASE, fetch_hmda_aggregations, parse_hmda_aggregations
 
 PAYLOAD = {
@@ -22,12 +24,8 @@ def test_parse_hmda_aggregations_keeps_group_action_counts():
 
 
 def test_parse_hmda_aggregations_rejects_error_response():
-    try:
+    with pytest.raises(ValueError, match="Invalid year"):
         parse_hmda_aggregations({"errorType": "bad-query", "message": "Invalid year"}, "races")
-    except ValueError as exc:
-        assert "Invalid year" in str(exc)
-    else:
-        raise AssertionError("Expected the HMDA error to be surfaced")
 
 
 def test_fetch_hmda_aggregations_builds_bounded_aggregate_request(monkeypatch):
@@ -60,9 +58,5 @@ def test_fetch_hmda_aggregations_builds_bounded_aggregate_request(monkeypatch):
 
 
 def test_fetch_hmda_aggregations_rejects_invalid_grouping():
-    try:
+    with pytest.raises(ValueError, match="Race, Ethnicity, or Sex"):
         fetch_hmda_aggregations(2025, "Income", None)
-    except ValueError as exc:
-        assert "Race, Ethnicity, or Sex" in str(exc)
-    else:
-        raise AssertionError("Expected invalid grouping to fail")
