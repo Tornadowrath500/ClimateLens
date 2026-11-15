@@ -539,7 +539,7 @@ export default function({parentElement,data}){
  function add(role,text){const d=document.createElement("div");d.className="msg "+role;d.textContent=text;body.append(d);body.scrollTop=body.scrollHeight;return d}
  function persist(){try{history=history.slice(-MAX_MESSAGES);localStorage.setItem(CHAT_KEY,JSON.stringify(history))}catch(e){status.textContent="This browser could not save chat history. It will remain only until this page closes."}}
  function saveMessage(role,content){const id=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():Date.now()+"-"+Math.random();const m={id,role,content:String(content).slice(0,1600),ts:Date.now()};history.push(m);persist();return m}
- function renderHistory(){body.replaceChildren();history.forEach(m=>add(m.role,m.content));if(!history.length&&panel.classList.contains("open"))add("assistant","Hi, I’m the FairLens guide. Choose a page-specific question or browse the app; I’ll stay within the evidence and methods shown here.");if(!model&&panel.classList.contains("open"))downloadButton()}
+ function renderHistory(){body.replaceChildren();if(!model)downloadButton();history.forEach(m=>add(m.role,m.content));if(!history.length&&panel.classList.contains("open"))add("assistant","Hi, I’m the FairLens guide. Choose a page-specific question or browse the app; I’ll stay within the evidence and methods shown here.")}
  function clearSaved(){history=[];body.replaceChildren();localStorage.removeItem(CHAT_KEY);hideProgress();status.textContent=model?"Local AI ready. Chat history cleared.":"Chat history cleared. AI stays off until enabled.";if(!model)downloadButton()}
  function setProgress(label,pct,detail,indeterminate=false){progress.hidden=false;pLabel.textContent=label;pDetail.textContent=detail||"";track.classList.toggle("indeterminate",indeterminate||pct==null);bar.style.width=(pct==null?0:Math.max(0,Math.min(100,pct)))+"%";if(pct!=null)track.setAttribute("aria-valuenow",String(Math.round(pct)));else track.removeAttribute("aria-valuenow")}
  function hideProgress(){progress.hidden=true;track.classList.remove("indeterminate")}
@@ -609,7 +609,7 @@ export default function({parentElement,data}){
  window.__fairlensReloadAI=()=>{if(root.isConnected&&!model&&!busy&&localStorage.getItem(AI_KEY)==="1")load(true)};
  history.forEach(m=>add(m.role,m.content));buildSuggestions();
  if(localStorage.getItem(AI_KEY)==="1"){downloadButton();window.__fairlensReloadAI()}
- else if(!history.length){add("assistant","Hi, I’m the FairLens guide. Choose a page-specific question or browse the app; I’ll stay within the evidence and methods shown here.");downloadButton()}
+ else{if(!history.length)add("assistant","Hi, I’m the FairLens guide. Choose a page-specific question or browse the app; I’ll stay within the evidence and methods shown here.");downloadButton()}
 }
 """
 GUIDE_COMPONENT = st.components.v2.component("fairlens_local_guide",html=GUIDE_HTML,css=GUIDE_CSS,js=GUIDE_JS,isolate_styles=True)
