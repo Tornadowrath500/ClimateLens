@@ -65,7 +65,7 @@ html, body, .stApp { background: #07111f; color: var(--fl-ink); }
 @keyframes fl-grid-drift { to { background-position: 0 22px, 22px 0; } }
 @keyframes fl-scan { to { transform: translateY(450vh); } }
 .block-container { position: relative; z-index: 1; max-width: 1240px; padding-top: 2.4rem; padding-bottom: 4rem; }
-header[data-testid="stHeader"] { background: rgba(7,17,31,.72); }
+header[data-testid="stHeader"] { position:sticky; top:0; z-index:500 !important; background: rgba(7,17,31,.88); }\n[data-testid="stToolbar"] { position:relative; z-index:501 !important; }
 section[data-testid="stSidebar"] { position: relative; z-index: 1; background: linear-gradient(180deg, rgba(11,27,45,.98), rgba(7,17,31,.98)); border-right: 1px solid var(--fl-line); }
 [data-testid="stSidebarNav"] { padding: .6rem .55rem 1rem; }
 [data-testid="stSidebarNav"] li div[data-testid="stMarkdownContainer"] p { color: #9aacc2; font: 700 .78rem/1.35 Inter, "Segoe UI", system-ui, sans-serif; letter-spacing: .045em; }
@@ -444,7 +444,7 @@ PAGE_SEARCH_HTML = '<div id="fairlens-page-search"></div>'
 PAGE_SEARCH_CSS = r"""
 #fairlens-page-search{--fg:var(--st-text-color,#e6f1ff);--muted:color-mix(in srgb,var(--fg) 65%,transparent);--panel:var(--st-secondary-background-color,#102033);--line:color-mix(in srgb,var(--fg) 18%,transparent);color:var(--fg);font:14px/1.4 var(--st-font,system-ui,sans-serif);height:62px;width:100%;margin:0 auto .5rem}
 #fairlens-page-search *{box-sizing:border-box}
-#fairlens-page-search .row{position:fixed;z-index:99997;top:60px;left:calc(50% + 145px);transform:translateX(-50%);width:min(760px,calc(100vw - 340px));display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:6px 8px 6px 13px;box-shadow:0 8px 28px #0000000d}
+#fairlens-page-search .row{position:fixed;z-index:120;top:60px;left:calc(50% + 145px);transform:translateX(-50%);width:min(760px,calc(100vw - 340px));display:flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:6px 8px 6px 13px;box-shadow:0 8px 28px #0000000d}
 #fairlens-page-search .glass{color:#42ddb3;font-size:18px}
 #fairlens-page-search input{min-width:40px;flex:1;border:0;outline:0;background:transparent;color:var(--fg);font:inherit}
 #fairlens-page-search input::placeholder{color:var(--muted)}
@@ -495,18 +495,18 @@ GUIDE_HTML = '<div id="fairlens-guide"></div>'
 GUIDE_CSS = r"""
 #fairlens-guide{--bg:var(--st-background-color,#081421);--panel:var(--st-secondary-background-color,#102033);--fg:var(--st-text-color,#e6f1ff);--muted:color-mix(in srgb,var(--fg) 68%,transparent);--line:color-mix(in srgb,var(--fg) 18%,transparent);color:var(--fg);font:14px/1.5 var(--st-font,system-ui,sans-serif)}
 #fairlens-guide *{box-sizing:border-box} #fairlens-guide button{font:inherit;cursor:pointer}
-#fairlens-guide .launch{position:fixed;z-index:99998;right:22px;bottom:22px;display:flex;align-items:center;gap:9px;border:1px solid #42ddb388;color:#07151c;background:linear-gradient(135deg,#42ddb3,#61c9ff);padding:9px 15px 9px 9px;border-radius:999px;font-weight:750;box-shadow:0 8px 32px #0005,0 0 26px #42ddb32e;transition:transform .18s ease,box-shadow .18s ease} #fairlens-guide .launch:hover{transform:translateY(-2px);box-shadow:0 12px 38px #0006,0 0 32px #42ddb34d} #fairlens-guide .botmark{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#07151c;color:#42ddb3;font-size:19px} #fairlens-guide .onlinedot{width:7px;height:7px;border-radius:50%;background:#0b654f;box-shadow:0 0 0 3px #0b654f24}
-#fairlens-guide .panel{position:fixed;z-index:99999;right:22px;bottom:78px;width:min(390px,calc(100vw - 28px));max-height:min(650px,calc(100vh - 110px));overflow:hidden;display:none;flex-direction:column;border:1px solid var(--line);border-radius:20px;background:var(--bg);box-shadow:0 24px 90px #0007,0 0 36px #42ddb31a}
+#fairlens-guide .launch{position:fixed;z-index:110;right:22px;bottom:22px;display:flex;align-items:center;gap:9px;border:1px solid #42ddb388;color:#07151c;background:linear-gradient(135deg,#42ddb3,#61c9ff);padding:9px 15px 9px 9px;border-radius:999px;font-weight:750;box-shadow:0 8px 32px #0005,0 0 26px #42ddb32e;transition:transform .18s ease,box-shadow .18s ease} #fairlens-guide .launch:hover{transform:translateY(-2px);box-shadow:0 12px 38px #0006,0 0 32px #42ddb34d} #fairlens-guide .botmark{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:#07151c;color:#42ddb3;font-size:19px} #fairlens-guide .onlinedot{width:7px;height:7px;border-radius:50%;background:#0b654f;box-shadow:0 0 0 3px #0b654f24}
+#fairlens-guide .panel{position:fixed;z-index:130;right:22px;bottom:78px;width:min(370px,calc(100vw - 28px));height:min(560px,calc(100vh - 100px));overflow:hidden;display:none;flex-direction:column;border:1px solid var(--line);border-radius:18px;background:var(--bg);box-shadow:0 24px 90px #0007,0 0 36px #42ddb31a}
 #fairlens-guide .panel.open{display:flex;animation:rise .2s ease-out}@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
-#fairlens-guide .head{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)} #fairlens-guide .orb{width:10px;height:10px;border-radius:50%;background:#42ddb3;box-shadow:0 0 14px #42ddb3} #fairlens-guide .title{flex:1;font-weight:750} #fairlens-guide small,#fairlens-guide .small{display:block;color:var(--muted);font-size:11px}
-#fairlens-guide .notice{padding:10px 14px;color:var(--muted);background:var(--panel);font-size:12px;border-bottom:1px solid var(--line)}
-#fairlens-guide .body{overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;min-height:140px;max-height:390px}
+#fairlens-guide .head{padding:11px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)} #fairlens-guide .orb{width:10px;height:10px;border-radius:50%;background:#42ddb3;box-shadow:0 0 14px #42ddb3} #fairlens-guide .title{flex:1;font-weight:750} #fairlens-guide small,#fairlens-guide .small{display:block;color:var(--muted);font-size:11px}
+#fairlens-guide .notice{padding:7px 14px;color:var(--muted);font-size:11px;border-bottom:1px solid var(--line)}
+#fairlens-guide .body{overflow:auto;padding:11px 13px;display:flex;flex:1;flex-direction:column;gap:8px;min-height:0;max-height:none}
 #fairlens-guide .msg{max-width:94%;padding:10px 12px;border-radius:14px;white-space:pre-wrap;overflow-wrap:anywhere} #fairlens-guide .assistant{align-self:flex-start;background:var(--panel);border:1px solid var(--line)} #fairlens-guide .user{align-self:flex-end;color:#07151c;background:linear-gradient(135deg,#42ddb3,#9be9d4)}
-#fairlens-guide .actions{display:flex;gap:8px;padding:0 14px 12px;flex-wrap:wrap} #fairlens-guide .soft{border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;padding:7px 10px;font-size:12px}
+#fairlens-guide .actions{display:flex;gap:7px;padding:0 13px 9px;flex-wrap:wrap} #fairlens-guide .soft{border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;padding:7px 10px;font-size:12px}
 #fairlens-guide .download{width:100%;border:0;color:#06131b;background:linear-gradient(135deg,#42ddb3,#61c9ff);border-radius:11px;padding:11px;font-weight:750}
-#fairlens-guide .input{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line)} #fairlens-guide textarea{flex:1;min-width:0;resize:vertical;min-height:42px;max-height:100px;border:1px solid var(--line);border-radius:11px;color:var(--fg);background:var(--panel);padding:10px;font:inherit} #fairlens-guide .send{border:0;border-radius:11px;padding:0 13px;background:#42ddb3;color:#06131b;font-weight:750}
+#fairlens-guide .input{display:flex;gap:7px;padding:9px 13px;border-top:1px solid var(--line)} #fairlens-guide textarea{flex:1;min-width:0;resize:vertical;min-height:42px;max-height:100px;border:1px solid var(--line);border-radius:11px;color:var(--fg);background:var(--panel);padding:10px;font:inherit} #fairlens-guide .send{border:0;border-radius:11px;padding:0 13px;background:#42ddb3;color:#06131b;font-weight:750}
 
-#fairlens-guide .suggestions{display:flex;gap:6px;padding:10px 12px 0;overflow-x:auto;scrollbar-width:thin}
+#fairlens-guide .suggestions{display:flex;gap:6px;padding:8px 12px 0;overflow-x:auto;scrollbar-width:thin} #fairlens-guide .chip:nth-child(n+3){display:none}
 #fairlens-guide .chip{white-space:nowrap;flex:0 0 auto;border-radius:9px;background:transparent;padding:6px 9px}
 #fairlens-guide .progress{padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--line)}
 #fairlens-guide .progress[hidden]{display:none}
@@ -520,8 +520,8 @@ GUIDE_CSS = r"""
 #fairlens-guide .msg.thinking:empty::after{content:"Generating locally…";color:var(--muted);animation:guide-pulse 1.3s ease-in-out infinite}
 @keyframes guide-pulse{50%{opacity:.45}}
 
-#fairlens-guide .small{padding:0 14px 10px}
-@media(max-width:500px){#fairlens-guide .launch{right:14px;bottom:14px;padding:7px;border-radius:50%}#fairlens-guide .launchtext,#fairlens-guide .onlinedot{display:none}#fairlens-guide .panel{right:10px;bottom:72px}}
+#fairlens-guide .small{padding:0 13px 8px}
+@media(max-width:500px){#fairlens-guide .launch{right:14px;bottom:14px;padding:7px;border-radius:50%}#fairlens-guide .launchtext,#fairlens-guide .onlinedot{display:none}#fairlens-guide .panel{right:10px;bottom:72px;height:min(560px,calc(100vh - 90px))}}
 """
 GUIDE_JS = r"""
 export default function({parentElement,data}){
@@ -530,7 +530,7 @@ export default function({parentElement,data}){
  if(root.dataset.ready){if(root.__flBuildSuggestions)root.__flBuildSuggestions();if(root.__flRenderHistory)root.__flRenderHistory();return;}
  root.dataset.ready="1";
  const CHAT_KEY="fairlens_chat_history_v1",AI_KEY="fairlens_local_ai_enabled_v1",MAX_MESSAGES=80;
- root.innerHTML='<button class="launch" aria-label="Open FairLens chat" aria-expanded="false"><span class="botmark" aria-hidden="true">✦</span><span class="launchtext">Ask FairLens</span><span class="onlinedot" aria-hidden="true"></span></button><section class="panel" aria-label="FairLens Guide"><div class="head"><span class="orb"></span><div class="title">FairLens Guide<small>PRIVATE · RUNS ON THIS DEVICE</small></div><button class="soft close" aria-label="Close chat">✕</button></div><div class="notice">Ask about FairLens methods, metrics, aggregate results, and evidence limits. No personal financial, lending, health, legal, or eligibility advice. Don’t enter personal or applicant data. Chat history and opt-in stay in this browser; clear chat to erase history.</div><div class="suggestions" aria-label="Questions for this page"></div><div class="progress" hidden role="status" aria-live="polite"><div class="progresslabel"></div><div class="track" role="progressbar" aria-label="Local AI progress" aria-valuemin="0" aria-valuemax="100"><span></span></div><div class="progressdetail"></div></div><div class="body" aria-live="polite"></div><div class="actions"><button class="soft next">✧ Audit next steps</button><button class="soft clear">Clear chat</button></div><div class="input"><textarea aria-label="Ask a FairLens question" placeholder="Ask about the page you’re viewing…"></textarea><button class="send">Send</button></div><div class="small status">AI stays off until you choose to download it.</div><div class="small">Your choice is remembered in this browser. Each app tab loads its own local session from cached model files.</div></section>';
+ root.innerHTML='<button class="launch" aria-label="Open FairLens chat" aria-expanded="false"><span class="botmark" aria-hidden="true">✦</span><span class="launchtext">Ask FairLens</span><span class="onlinedot" aria-hidden="true"></span></button><section class="panel" aria-label="FairLens Guide"><div class="head"><span class="orb"></span><div class="title">FairLens Guide<small>LOCAL · EDUCATIONAL</small></div><button class="soft close" aria-label="Close chat">✕</button></div><div class="notice">FairLens methods and aggregate evidence only. No personal advice; don’t enter personal or applicant data.</div><div class="suggestions" aria-label="Questions for this page"></div><div class="progress" hidden role="status" aria-live="polite"><div class="progresslabel"></div><div class="track" role="progressbar" aria-label="Local AI progress" aria-valuemin="0" aria-valuemax="100"><span></span></div><div class="progressdetail"></div></div><div class="body" aria-live="polite"></div><div class="actions"><button class="soft next">✧ Audit next steps</button><button class="soft clear">Clear chat</button></div><div class="input"><textarea aria-label="Ask a FairLens question" placeholder="Ask about the page you’re viewing…"></textarea><button class="send">Send</button></div><div class="small status">AI stays off until you choose to download it.</div></section>';
  const panel=root.querySelector(".panel"),body=root.querySelector(".body"),input=root.querySelector("textarea"),status=root.querySelector(".status"),progress=root.querySelector(".progress"),pLabel=root.querySelector(".progresslabel"),pDetail=root.querySelector(".progressdetail"),track=root.querySelector(".track"),bar=track.querySelector("span"),chips=root.querySelector(".suggestions");
  let model=window.__fairlensWebLLMEngine||null,busy=false,webllm=window.__fairlensWebLLM||null;
  let history=[];try{history=JSON.parse(localStorage.getItem(CHAT_KEY)||"[]");if(!Array.isArray(history))history=[]}catch(e){history=[]}
@@ -553,12 +553,12 @@ export default function({parentElement,data}){
  function fmt(n){if(!Number.isFinite(n))return "";const u=["B","KB","MB","GB"];let i=0,x=n;while(x>=1024&&i<u.length-1){x/=1024;i++}return (i?x.toFixed(1):x.toFixed(0))+" "+u[i]}
  function buildSuggestions(){
   const page=String((root.__flContext||{}).page||"").toLowerCase();let items;
-  if(/data|scope|understand|source/.test(page))items=[["Explain the dataset","Explain what this dataset can tell us and its biggest limitation."],["Read the labels","Explain the target labels and what they do not represent."],["Audit next step","What should I check before interpreting these results?"]];
-  else if(/performance|evaluat|model/.test(page))items=[["Explain the metrics","Explain accuracy, recall, and cost here in plain language."],["Understand errors","What do the two error types mean in this audit?"],["Audit next step","What is a careful next check for model performance?"]];
-  else if(/group|outcome|proxy|health/.test(page))items=[["Explain this comparison","Explain the group comparison and its uncertainty."],["What can’t it prove?","What can a group gap establish, and what can’t it establish?"],["Audit next step","What evidence should I review before drawing conclusions?"]];
-  else if(/finding|report|claim|method|limit/.test(page))items=[["Check this claim","How do I keep a conclusion within the evidence shown?"],["Explain limitations","Which limitations should accompany this result?"],["Audit next step","What should a careful report include?"]];
-  else if(/applicant|simulat|map|experiment|mitigation/.test(page))items=[["Explain this tool","What does this interactive tool demonstrate?"],["Explore trade-offs","Which settings or trade-offs should I compare?"],["Audit next step","What should I record to make this exploration reproducible?"]];
-  else items=[["Explain this page","Explain the purpose of this FairLens page."],["Read the evidence","What should I look for before trusting this result?"],["Audit next step","What is a careful next step for this review?"]];
+  if(/data|scope|understand|source/.test(page))items=[["Explain the dataset","Explain what this dataset can tell us and its biggest limitation."],["Read the labels","Explain the target labels and what they do not represent."]];
+  else if(/performance|evaluat|model/.test(page))items=[["Explain the metrics","Explain accuracy, recall, and cost here in plain language."],["Understand errors","What do the two error types mean in this audit?"]];
+  else if(/group|outcome|proxy|health/.test(page))items=[["Explain this comparison","Explain the group comparison and its uncertainty."],["What can’t it prove?","What can a group gap establish, and what can’t it establish?"]];
+  else if(/finding|report|claim|method|limit/.test(page))items=[["Check this claim","How do I keep a conclusion within the evidence shown?"],["Explain limitations","Which limitations should accompany this result?"]];
+  else if(/applicant|simulat|map|experiment|mitigation/.test(page))items=[["Explain this tool","What does this interactive tool demonstrate?"],["Explore trade-offs","Which settings or trade-offs should I compare?"]];
+  else items=[["Explain this page","Explain the purpose of this FairLens page."],["Read the evidence","What should I look for before trusting this result?"]];
   chips.replaceChildren();items.forEach(([label,prompt])=>{const b=document.createElement("button");b.className="soft chip";b.textContent=label;b.onclick=()=>ask(prompt);chips.append(b)});
  }
  function downloadButton(){if(root.querySelector(".download"))return;const b=document.createElement("button");b.className="download";b.textContent=model?"Local AI ready":(localStorage.getItem(AI_KEY)==="1"?"Reconnect local AI":"Download local AI to enable Q&A");b.disabled=!!model;b.onclick=()=>load(false);body.prepend(b)}
@@ -585,7 +585,7 @@ export default function({parentElement,data}){
   finally{busy=false}
  }
  root.querySelector(".launch").onclick=()=>{panel.classList.toggle("open");root.querySelector(".launch").setAttribute("aria-expanded",String(panel.classList.contains("open")));if(panel.classList.contains("open")){buildSuggestions();if(!body.children.length){if(history.length)renderHistory();else add("assistant","Hi, I’m the FairLens guide. Choose a page-specific question or browse the app; I’ll stay within the evidence and methods shown here.");downloadButton()}}};
- root.querySelector(".close").onclick=()=>{panel.classList.remove("open");root.querySelector(".launch").setAttribute("aria-expanded","false")};
+ root.querySelector(".close").onclick=()=>{panel.classList.remove("open");root.querySelector(".launch").setAttribute("aria-expanded","false")};\n document.addEventListener("keydown",e=>{if(e.key==="Escape"&&panel.classList.contains("open")){panel.classList.remove("open");root.querySelector(".launch").setAttribute("aria-expanded","false");root.querySelector(".launch").focus()}});
  async function ask(q){
   q=(q||"").trim();if(!q||busy)return;input.value="";add("user",q);
   const individual=/\b(my|me|i)\b.{0,80}\b(loan|credit|application|invest|stock|mortgage|borrow|approval|eligib|insurance|health|diagnos|treatment|legal)\b|\b(should i (borrow|invest|apply|buy|sell)|will i (be approved|qualify)|approve me|stock pick|what should i invest in|which (stock|crypto|loan)|what (treatment|medication|legal action) should)\b/i.test(q);
@@ -627,15 +627,39 @@ GUIDE_COMPONENT = st.components.v2.component("fairlens_local_guide",html=GUIDE_H
 
 def audit_guide() -> None:
     review = st.session_state.get("final_test_review")
-    context = {"page": st.session_state.get("fl_current_page", "FairLens"),
-               "mode": "synthetic demo" if st.session_state.get("use_demo_data") else "historical benchmark",
-               "scope": "Educational only; German Credit benchmark donated in 1994, not current applicants."}
+    page = st.session_state.get("fl_current_page", "FairLens")
+    context = {
+        "current_page": page,
+        "data_mode": "synthetic demo" if st.session_state.get("use_demo_data") else "historical benchmark",
+        "verified_fairlens_reference": {
+            "what_fairlens_is": "FairLens is an educational model-auditing app. It is not a lender, underwriting system, financial service, or professional advice tool.",
+            "dataset": "The app's primary case study is the UCI Statlog (German Credit) benchmark: 1,000 historical records, 20 features, collected in Germany and donated to UCI in 1994 by Hans Hofmann. UCI ID 144. The Statlog version has documented coding-information concerns.",
+            "labels": "Target 1 means Good credit risk and 2 means Bad credit risk. These are historical labels, not lender approvals or verified future repayment outcomes.",
+            "app_workflow": "FairLens compares baseline and candidate classifiers, error types, the dataset's cost matrix, group-level outcome/error rates, and uncertainty. Threshold/model choices use validation data; a final test review is shown only after a deliberate pin.",
+            "cost_matrix": "The UCI cost convention assigns cost 5 to an actually Bad record predicted Good and cost 1 to an actually Good record predicted Bad. These are relative dataset costs, not dollar amounts.",
+            "group_comparison": "The initial age comparison is under 25 versus 25 or older. This is an exploratory project choice, not a legal category or fairness standard. Group differences alone do not establish discrimination, causation, or legal noncompliance.",
+            "uncertainty": "Group rates include 95% Wilson intervals; repeated splits are used to inspect stability. Small groups have noisier estimates.",
+            "synthetic_health_lab": "The health equity lab uses invented records to illustrate assumptions and metrics. It is not patient data, a clinical audit, or evidence about real screening systems.",
+            "limits": "The benchmark is old, small, specific to its historical context, and has coding/documentation limitations. Do not generalize its results to current applicants or institutions.",
+            "metric_definitions": METRIC_HELP,
+        },
+        "available_live_evidence": "The assistant receives the page title and only an explicitly pinned final-test summary. It does not receive the page's charts, unpinned metrics, raw applicant rows, uploaded files, or personal records. Never invent a current metric or claim to have inspected evidence that is not included here.",
+        "answer_rule": "Answer only from the verified reference and available live evidence. If a requested fact or value is absent, say it is not provided to the chat and direct the visitor to the relevant page/chart. Never invent organizations, model origins, results, dates, causes, or recommendations.",
+    }
     if isinstance(review, dict):
         findings = review.get("findings", {})
         test = findings.get("test", {}) if isinstance(findings, dict) else {}
-        context["pinned_review"] = {"model": review.get("model"), "test_n": findings.get("n_test") if isinstance(findings, dict) else None,
-            "metrics": {k: test[k] for k in ("accuracy", "recall_other", "cost_per_applicant") if isinstance(test, dict) and isinstance(test.get(k), (int, float))}}
-    GUIDE_COMPONENT(data=context,key="fairlens_local_guide")
+        context["pinned_review"] = {
+            "model": review.get("model"),
+            "test_n": findings.get("n_test") if isinstance(findings, dict) else None,
+            "metrics": {
+                k: test[k]
+                for k in ("accuracy", "recall_other", "cost_per_applicant")
+                if isinstance(test, dict) and isinstance(test.get(k), (int, float))
+            },
+        }
+    GUIDE_COMPONENT(data=context, key="fairlens_local_guide")
+
 
 def setup_page(title: str) -> None:
     """Inject the shared skin and local Audit Guide on every page."""
