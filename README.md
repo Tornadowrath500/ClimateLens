@@ -85,8 +85,10 @@ python -m pytest
 The Streamlit Community Cloud app should be configured to use this repository, branch `main`, and `app.py`. GitHub Actions currently runs tests; that workflow is not the Streamlit deployment. Confirm deployments in Streamlit's app settings and logs. After a merge, verify the deployed revision and open the app to check the visible result.
 
 
-## AI Audit Guide
+## Local AI Audit Guide
 
-The app includes an optional, tightly scoped Q&A helper for explaining FairLens metrics, aggregate pinned-review results, limitations, and sensible audit follow-up steps. It must not provide personal financial, lending, medical, or legal advice. It receives only an allow-listed aggregate review summary; applicant rows and uploaded files are not sent. Questions are sent to OpenAI only after submission, with Responses API storage disabled. Do not enter personal, applicant, patient, or account information.
+The optional FairLens Guide answers questions about app methods, metrics, aggregate pinned-review results, evidence limits, and non-decision audit steps. It runs in the visitor’s browser with a small quantized language model on WebGPU. There is no OpenAI integration, API key, or server-side question submission.
 
-To enable the hosted helper, configure `OPENAI_API_KEY` in Streamlit Cloud app Secrets. Optionally set `FAIRLENS_AI_MODEL`; the default is `gpt-4.1-mini`. Without a key, the app explains that AI is unavailable and keeps all other pages usable. Model output is generated and can be wrong; verify important interpretations against the app's reported metrics and source documentation.
+The model library and model weights are fetched only after a visitor opens the guide and clicks **Download local model & enable**. The initial download can be large and requires an internet connection; later use depends on browser cache and available WebGPU device memory. Unsupported browsers can still use the built-in next-steps checklist. Questions and chat history stay in the browser tab and are not sent to the app server. The app supplies only the current page and an allow-listed aggregate summary of the pinned review, never applicant rows or uploaded records.
+
+The guide is educational and can be wrong. It must not provide individual financial, lending, health, or legal advice, or turn benchmark outcomes into real-world eligibility recommendations. Verify interpretations against the displayed data, method notes, and cited sources.
