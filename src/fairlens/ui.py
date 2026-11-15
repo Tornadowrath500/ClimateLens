@@ -65,7 +65,8 @@ html, body, .stApp { background: #07111f; color: var(--fl-ink); }
 @keyframes fl-grid-drift { to { background-position: 0 22px, 22px 0; } }
 @keyframes fl-scan { to { transform: translateY(450vh); } }
 .block-container { position: relative; z-index: 1; max-width: 1240px; padding-top: 2.4rem; padding-bottom: 4rem; }
-header[data-testid="stHeader"] { position:sticky; top:0; z-index:500 !important; background: rgba(7,17,31,.88); }\n[data-testid="stToolbar"] { position:relative; z-index:501 !important; }
+header[data-testid="stHeader"] { position:sticky; top:0; z-index:500 !important; background: rgba(7,17,31,.88); }
+[data-testid="stToolbar"] { position:relative; z-index:501 !important; }
 section[data-testid="stSidebar"] { position: relative; z-index: 1; background: linear-gradient(180deg, rgba(11,27,45,.98), rgba(7,17,31,.98)); border-right: 1px solid var(--fl-line); }
 [data-testid="stSidebarNav"] { padding: .6rem .55rem 1rem; }
 [data-testid="stSidebarNav"] li div[data-testid="stMarkdownContainer"] p { color: #9aacc2; font: 700 .78rem/1.35 Inter, "Segoe UI", system-ui, sans-serif; letter-spacing: .045em; }
@@ -585,7 +586,8 @@ export default function({parentElement,data}){
   finally{busy=false}
  }
  root.querySelector(".launch").onclick=()=>{panel.classList.toggle("open");root.querySelector(".launch").setAttribute("aria-expanded",String(panel.classList.contains("open")));if(panel.classList.contains("open")){buildSuggestions();if(!body.children.length){if(history.length)renderHistory();else add("assistant","Hi, I’m the FairLens guide. Choose a page-specific question or browse the app; I’ll stay within the evidence and methods shown here.");downloadButton()}}};
- root.querySelector(".close").onclick=()=>{panel.classList.remove("open");root.querySelector(".launch").setAttribute("aria-expanded","false")};\n document.addEventListener("keydown",e=>{if(e.key==="Escape"&&panel.classList.contains("open")){panel.classList.remove("open");root.querySelector(".launch").setAttribute("aria-expanded","false");root.querySelector(".launch").focus()}});
+ root.querySelector(".close").onclick=()=>{panel.classList.remove("open");root.querySelector(".launch").setAttribute("aria-expanded","false")};
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&panel.classList.contains("open")){panel.classList.remove("open");root.querySelector(".launch").setAttribute("aria-expanded","false");root.querySelector(".launch").focus()}});
  async function ask(q){
   q=(q||"").trim();if(!q||busy)return;input.value="";add("user",q);
   const individual=/\b(my|me|i)\b.{0,80}\b(loan|credit|application|invest|stock|mortgage|borrow|approval|eligib|insurance|health|diagnos|treatment|legal)\b|\b(should i (borrow|invest|apply|buy|sell)|will i (be approved|qualify)|approve me|stock pick|what should i invest in|which (stock|crypto|loan)|what (treatment|medication|legal action) should)\b/i.test(q);
