@@ -48,8 +48,8 @@ New core modules (all unit-tested, no Streamlit imports): `applicant.py`, `mapvi
 
 ```
 .
-├── app.py                  # Streamlit home page
-├── pages/                  # 1 Data, 2 Evaluate, 3 Group outcomes, 4 Experiment lab, 5 Findings, 6 Methodology
+├── app.py                  # Grouped Streamlit navigation and entry point
+├── pages/                  # Overview, guided review, applicant exploration, and audit tools
 ├── src/fairlens/           # config, data, splitting, models, metrics, evaluation, report, ui
 ├── scripts/                # Explicit data acquisition
 ├── tests/                  # Unit tests + Streamlit smoke tests
