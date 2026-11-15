@@ -298,7 +298,7 @@ _NO_RIBBON = {"Over-claim game", "Claim checker", "Home", "Session profile", "Yo
 
 
 JUMP = [
-    ("Home", "pages/0_Home.py"), ("Take the tour", "pages/13_Tutorial.py"), ("Data & scope", "pages/1_Understand_the_Data.py"),
+    ("Home", "pages/0_Home.py"), ("Take the tour", "pages/13_Tutorial.py"), ("Session profile", "pages/12_Profile.py"), ("Data & scope", "pages/1_Understand_the_Data.py"),
     ("Model performance", "pages/2_Evaluate_the_Model.py"), ("Group outcomes", "pages/3_Investigate_Group_Outcomes.py"),
     ("Findings & report", "pages/5_Findings_and_Report.py"), ("Claim checker", "pages/15_Claim_Checker.py"),
     ("Methods & limits", "pages/6_Methodology_and_Limitations.py"), ("Hidden bias challenge", "pages/14_Hidden_Bias_Challenge.py"),
