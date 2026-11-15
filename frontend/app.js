@@ -39,7 +39,7 @@ function nav() {
   const side = $("#sidebar"); side.replaceChildren(
     h("a", { class: "brand", href: "#overview" }, h("span", { class: "brand-mark" }, "F"), h("span", {}, h("strong", "FairLens"), h("small", "MODEL AUDIT WORKSPACE"))),
     h("p",{class:"sidebar-hint"},"A guided review of model data, performance, and fairness signals."),
-    ...[...new Set(pages.map((p)=>p[3]))].map((section)=>h("section",{class:"nav-section"},h("div",{class:"nav-title"},section),...pages.filter((p)=>p[3]===section).map(([id,label,n])=>h("a",{class:`nav-link ${current===id?"active":""}`,href:`#${id}`,...(current===id?{"aria-current":"page"}:{})},h("span",{class:"nav-number"},n),label)))),
+    ...[...new Set(pages.map((p)=>p[3]))].map((section)=>h("section",{class:"nav-section"},h("div",{class:"nav-title"},section),...pages.filter((p)=>p[3]===section).map(([id,label,n])=>h("a",{class:`nav-link ${current===id?"active":""}`,href:`#${id}`,...(current===id?{"aria-current":"page"}:{})},h("span",{class:"nav-icon", "aria-hidden":"true"},({overview:"◈",data:"▤",evaluation:"⌁",groups:"◎",map:"⌖",simulator:"⊙",experiment:"⌘",mitigation:"◉",proxies:"⌗",byom:"↗",report:"▧",methodology:"∴"})[id]),h("span",{class:"nav-number"},n),h("span",{class:"nav-text"},label))))),
     h("div", { class: "sidebar-bottom" }, h("span", { class: "status-dot" }), "Educational prototype", h("small", "Never use for real lending decisions"))
   );
 }
@@ -49,7 +49,7 @@ function shell(title, intro, content) {
     ? "Synthetic demo records are invented and must not be presented as real evidence. FairLens is not a lending system."
     : "The benchmark is historical and does not represent current applicants. Group differences are investigation signals, not proof of discrimination.";
   const main = $("#main"); main.replaceChildren(
-    h("header", { class: "topbar" }, h("button", { class: "menu-btn", "aria-label": "Open navigation", onclick: () => document.body.classList.toggle("nav-open") }, "☰"), h("span", { class: "topbar-label" }, "FAIRNESS REVIEW / " + title.toUpperCase()), h("button", { class: "theme-toggle", onclick: () => store.set({ theme: s.theme === "dark" ? "light" : "dark" }) }, s.theme === "dark" ? "Light theme" : "Dark theme")),
+    h("header", { class: "topbar" }, h("button", { class: "menu-btn", "aria-label": "Open navigation", onclick: () => document.body.classList.toggle("nav-open") }, "☰"), h("span", { class: "topbar-label" }, "FAIRNESS REVIEW / " + title.toUpperCase()), h("button", { class: "theme-toggle", "aria-label": s.theme === "dark" ? "Switch to light theme" : "Switch to dark theme", title: s.theme === "dark" ? "Switch to light theme" : "Switch to dark theme", onclick: () => store.set({ theme: s.theme === "dark" ? "light" : "dark" }) }, h("span",{class:"theme-icon","aria-hidden":"true"},s.theme === "dark" ? "☀" : "☾"),h("span",{class:"theme-label"},s.theme === "dark" ? "Light" : "Dark"))),
     h("div", { class: "page-content" }, h("div", { class: "page-heading" }, h("div", {}, h("div", { class: "eyebrow" }, `${pages.find((p)=>p[0]===current)?.[3] || "FAIRLENS"} / STEP ${pages.findIndex((p)=>p[0]===current)+1} OF ${pages.length}`), h("h1", title), h("p", intro)), settings()),
       h("div", { class: `notice ${s.source === "demo" ? "demo" : ""}` }, h("strong", s.source === "demo" ? "Synthetic data" : "Historical benchmark"), " · ", notice),
       content)
