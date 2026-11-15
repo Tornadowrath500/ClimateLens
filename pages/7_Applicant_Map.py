@@ -61,40 +61,96 @@ else:
     marker = dict(size=9, color=[COLORS[colour_by][v] for v in frame[key]], line=dict(width=0.6, color="#ffffff"))
 marker["symbol"] = ["diamond" if g == YOUNG else "circle" for g in frame["group"]]
 
-fig = go.Figure()
-if terrain_on and summary["regions"]:
-    xe, ye = np.linspace(frame["x"].min(), frame["x"].max(), bins + 1), np.linspace(frame["y"].min(), frame["y"].max(), bins + 1)
-    z = np.full((bins, bins), np.nan)
-    tip = np.full((bins, bins), "", dtype=object)
-    for r in t[t["reliable"]].itertuples():
-        z[r.cy, r.cx] = r.gap
-        tip[r.cy, r.cx] = (f"Region: {r.n_young} younger / {r.n_old} older applicants<br>"
-                           f"Classified Good: {r.rate_young:.0%} vs {r.rate_old:.0%}<br>Gap {r.gap:+.0%}")
-    fig.add_trace(go.Heatmap(
-        x=(xe[:-1] + xe[1:]) / 2, y=(ye[:-1] + ye[1:]) / 2, z=z, text=tip, hoverinfo="text", hoverongaps=False, opacity=0.55,
-        colorscale=[[0, "#e0a441"], [0.5, "#f4f2ea"], [1, "#6aa58f"]], zmin=-0.4, zmax=0.4, showscale=True,
-        colorbar=dict(title="Younger minus<br>older rate", x=1.02, thickness=10, tickformat="+.0%"), xgap=2, ygap=2,
-    ))
-scatter_curve = len(fig.data)
-fig.add_trace(go.Scatter(
-    x=frame["x"], y=frame["y"], mode="markers", marker=marker, showlegend=False, customdata=np.arange(len(frame)),
-    hovertemplate="Applicant %{customdata}<br>Score %{text}<extra></extra>", text=[f"{v:.2f}" for v in frame["p_good"]],
-    unselected=dict(marker=dict(opacity=0.55)),
-))
-fig.update_xaxes(title=f"Similarity axis 1 ({md.explained[0]:.0%} of variation)", showticklabels=False)
-fig.update_yaxes(title=f"Similarity axis 2 ({md.explained[1]:.0%})", showticklabels=False)
-style(fig, 560)
-fig.update_layout(clickmode="event+select", dragmode="select", margin=dict(l=10, r=10, t=10, b=10))
-try:
-    event = st.plotly_chart(fig, theme=None, width="stretch", on_select="rerun", selection_mode="points", key="applicant_map")
-except TypeError:
-    event = st.plotly_chart(fig, theme=None, use_container_width=True, on_select="rerun", selection_mode="points", key="applicant_map")
+left, right = st.columns([1.4, 1])
 
-legend = {"Model score": "Colour = model's score for Good (amber low, green high)",
-          "Age group": f"Amber = {YOUNG}, green = {OLD}", "Mistakes": "Red = costly mistake, amber = turned away wrongly, sage = correct",
-          "Actual label": "Green = labelled Good, amber = labelled Bad"}[colour_by]
-st.caption(f"{legend}. Diamonds are {YOUNG}; circles are {OLD}. Positions come from non-sensitive inputs only. "
-           f"{len(frame)} applicants ({'validation + training' if more else 'validation only'}).")
+with left:
+    fig = go.Figure()
+    if terrain_on and summary["regions"]:
+        xe, ye = np.linspace(frame["x"].min(), frame["x"].max(), bins + 1), np.linspace(frame["y"].min(), frame["y"].max(), bins + 1)
+        z = np.full((bins, bins), np.nan)
+        tip = np.full((bins, bins), "", dtype=object)
+        for r in t[t["reliable"]].itertuples():
+            z[r.cy, r.cx] = r.gap
+            tip[r.cy, r.cx] = (f"Region: {r.n_young} younger / {r.n_old} older applicants<br>"
+                               f"Classified Good: {r.rate_young:.0%} vs {r.rate_old:.0%}<br>Gap {r.gap:+.0%}")
+        fig.add_trace(go.Heatmap(
+            x=(xe[:-1] + xe[1:]) / 2, y=(ye[:-1] + ye[1:]) / 2, z=z, text=tip, hoverinfo="text", hoverongaps=False, opacity=0.55,
+            colorscale=[[0, "#e0a441"], [0.5, "#f4f2ea"], [1, "#6aa58f"]], zmin=-0.4, zmax=0.4, showscale=True,
+            colorbar=dict(title="Younger minus<br>older rate", x=1.02, thickness=10, tickformat="+.0%"), xgap=2, ygap=2,
+        ))
+    scatter_curve = len(fig.data)
+    fig.add_trace(go.Scatter(
+        x=frame["x"], y=frame["y"], mode="markers", marker=marker, showlegend=False, customdata=np.arange(len(frame)),
+        hovertemplate="Applicant %{customdata}<br>Score %{text}<extra></extra>", text=[f"{v:.2f}" for v in frame["p_good"]],
+        unselected=dict(marker=dict(opacity=0.55)),
+    ))
+    fig.update_xaxes(title=f"Similarity axis 1 ({md.explained[0]:.0%} of variation)", showticklabels=False)
+    fig.update_yaxes(title=f"Similarity axis 2 ({md.explained[1]:.0%})", showticklabels=False)
+    style(fig, 560)
+    fig.update_layout(clickmode="event+select", dragmode="select", margin=dict(l=10, r=10, t=10, b=10))
+    try:
+        event = st.plotly_chart(fig, theme=None, width="stretch", on_select="rerun", selection_mode="points", key="applicant_map")
+    except TypeError:
+        event = st.plotly_chart(fig, theme=None, use_container_width=True, on_select="rerun", selection_mode="points", key="applicant_map")
+
+    legend = {"Model score": "Colour = model's score for Good (amber low, green high)",
+              "Age group": f"Amber = {YOUNG}, green = {OLD}", "Mistakes": "Red = costly mistake, amber = turned away wrongly, sage = correct",
+              "Actual label": "Green = labelled Good, amber = labelled Bad"}[colour_by]
+    st.caption(f"{legend}. Diamonds are {YOUNG}; circles are {OLD}. Positions come from non-sensitive inputs only. "
+               f"{len(frame)} applicants ({'validation + training' if more else 'validation only'}).")
+
+with right:
+    st.subheader("Applicant details")
+    # ---- selected applicant ------------------------------------------------------------------------------------
+    st.subheader("Inspect an applicant")
+    picked = None
+    try:
+        pts = [q for q in event.selection.points if q.get("curve_number", scatter_curve) == scatter_curve]
+        if pts:
+            picked = int(pts[0]["point_index"])
+    except Exception:
+        picked = None
+    manual = st.number_input("Or type an applicant number (shown on hover)", 0, len(frame) - 1, 0, key="map_manual")
+    if picked is None:
+        st.caption("Click or box-select dots on the map to inspect one. Until then, showing the applicant number above.")
+    i = int(picked if picked is not None else manual)
+
+    row = md.X.iloc[[i]]
+    pipe = audit.pipelines[settings.model]
+    thr = op.threshold if not op.per_group else op.per_group.get(frame.loc[i, "group"], op.threshold)
+    p = score(pipe, row)
+    left, right = st.columns([1, 1.25])
+    with left:
+        st.markdown(f"**Applicant {i}** · {frame.loc[i, 'group']} · labelled {'Good' if frame.loc[i, 'actual_good'] else 'Bad'} in the data")
+        st.markdown(decision_chip(p, thr), unsafe_allow_html=True)
+        score_bar(p, thr)
+        show_table(friendly_profile(row))
+    with right:
+        st.markdown("**Why this score?** (each input's push versus a typical applicant)")
+        show_chart(contribution_chart(explain(pipe, row, audit.splits.X_train)))
+        st.caption("Measured by swapping one input at a time for values from other applicants. Interpretation, not causation.")
+
+    la = look_alikes(md, i)
+    st.markdown("**Look-alike check**")
+    a, b = st.columns(2)
+    for col, key, label in ((a, "same", "same age group"), (b, "other", "other age group")):
+        r = la[key]
+        col.metric(f"15 closest look-alikes, {label}", f"{r['classified_good']:.0%} classified Good",
+                   f"{r['actual_good']:.0%} labelled Good in the data", delta_color="off")
+    st.caption("Look-alikes are matched on every input except age and personal status. A big difference between the two numbers "
+               "is a prompt to investigate, not proof of unequal treatment.")
+
+    with st.expander("What would change this decision? (illustrative)"):
+        steps, p_end, flipped = greedy_path(pipe, row, audit.splits.X_train, thr)
+        if steps.empty:
+            st.write("No single change among the tested inputs moves this score.")
+        else:
+            show_table(steps.assign(p_after=steps["p_after"].round(3)).rename(columns={"p_after": "score after"}))
+            st.write(("These changes would flip the model's classification." if flipped else "Even these changes would not flip the classification.")
+                     + " This describes the model, not what an applicant should do.")
+    if st.button("Open this applicant in the Simulator", type="primary"):
+        st.session_state["sim_seed_row"] = row.reset_index(drop=True)
+        st.switch_page("pages/8_Applicant_Simulator.py")
 
 # ---- terrain readout ------------------------------------------------------------------------------------------
 st.subheader("What the terrain says")
@@ -112,54 +168,3 @@ else:
     with st.expander("Region table"):
         show_table(t[t["reliable"]].assign(gap=lambda d: d["gap"].round(3), rate_young=lambda d: d["rate_young"].round(3), rate_old=lambda d: d["rate_old"].round(3))
                    [["n_young", "n_old", "rate_young", "rate_old", "gap"]].sort_values("gap"))
-
-# ---- selected applicant ------------------------------------------------------------------------------------
-st.subheader("Inspect an applicant")
-picked = None
-try:
-    pts = [q for q in event.selection.points if q.get("curve_number", scatter_curve) == scatter_curve]
-    if pts:
-        picked = int(pts[0]["point_index"])
-except Exception:
-    picked = None
-manual = st.number_input("Or type an applicant number (shown on hover)", 0, len(frame) - 1, 0, key="map_manual")
-if picked is None:
-    st.caption("Click or box-select dots on the map to inspect one. Until then, showing the applicant number above.")
-i = int(picked if picked is not None else manual)
-
-row = md.X.iloc[[i]]
-pipe = audit.pipelines[settings.model]
-thr = op.threshold if not op.per_group else op.per_group.get(frame.loc[i, "group"], op.threshold)
-p = score(pipe, row)
-left, right = st.columns([1, 1.25])
-with left:
-    st.markdown(f"**Applicant {i}** · {frame.loc[i, 'group']} · labelled {'Good' if frame.loc[i, 'actual_good'] else 'Bad'} in the data")
-    st.markdown(decision_chip(p, thr), unsafe_allow_html=True)
-    score_bar(p, thr)
-    show_table(friendly_profile(row))
-with right:
-    st.markdown("**Why this score?** (each input's push versus a typical applicant)")
-    show_chart(contribution_chart(explain(pipe, row, audit.splits.X_train)))
-    st.caption("Measured by swapping one input at a time for values from other applicants. Interpretation, not causation.")
-
-la = look_alikes(md, i)
-st.markdown("**Look-alike check**")
-a, b = st.columns(2)
-for col, key, label in ((a, "same", "same age group"), (b, "other", "other age group")):
-    r = la[key]
-    col.metric(f"15 closest look-alikes, {label}", f"{r['classified_good']:.0%} classified Good",
-               f"{r['actual_good']:.0%} labelled Good in the data", delta_color="off")
-st.caption("Look-alikes are matched on every input except age and personal status. A big difference between the two numbers "
-           "is a prompt to investigate, not proof of unequal treatment.")
-
-with st.expander("What would change this decision? (illustrative)"):
-    steps, p_end, flipped = greedy_path(pipe, row, audit.splits.X_train, thr)
-    if steps.empty:
-        st.write("No single change among the tested inputs moves this score.")
-    else:
-        show_table(steps.assign(p_after=steps["p_after"].round(3)).rename(columns={"p_after": "score after"}))
-        st.write(("These changes would flip the model's classification." if flipped else "Even these changes would not flip the classification.")
-                 + " This describes the model, not what an applicant should do.")
-if st.button("Open this applicant in the Simulator", type="primary"):
-    st.session_state["sim_seed_row"] = row.reset_index(drop=True)
-    st.switch_page("pages/8_Applicant_Simulator.py")
