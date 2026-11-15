@@ -474,7 +474,7 @@ export default function({parentElement,data}){
  root.querySelector(".send").onclick=()=>ask(input.value);input.onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();ask(input.value)}};
  root.querySelector(".next").onclick=()=>{add("assistant","A careful review path for "+(ctx.page||"this view")+":\n1. Confirm the data source, time period, target, and sample size.\n2. Compare group outcome and error rates with denominators and uncertainty.\n3. Stress-test another threshold or model and document trade-offs.\n4. State what the evidence cannot establish.\n\nThese are audit steps, not financial or lending advice.");beep(700,.07)};
  root.querySelector(".clear").onclick=()=>{body.replaceChildren();history.length=0;status.textContent="Conversation cleared.";beep(480)};
- if(!window.__flSoundListener){window.__flSoundListener=true;document.addEventListener("click",e=>{if(localStorage.getItem("fl_sounds")!=="1")return;let x=e.target.closest("button,[role=tab],a,[role=switch]");if(x&&!x.closest("#fairlens-guide"))beep(520,.03)},{passive:true})}
+ if(!window.__flSoundListener){window.__flSoundListener=true;document.addEventListener("click",e=>{if(localStorage.getItem("fl_sounds")!=="1")return;let path=e.composedPath?e.composedPath():[e.target],x=path.find(n=>n instanceof Element&&n.matches("button,[role=tab],a,[role=switch]"));if(x&&!path.some(n=>n instanceof Element&&n.id==="fairlens-guide"))beep(520,.03)},{passive:true})}
 }
 """
 GUIDE_COMPONENT = st.components.v2.component("fairlens_local_guide",html=GUIDE_HTML,css=GUIDE_CSS,js=GUIDE_JS,isolate_styles=True)
@@ -492,8 +492,9 @@ def audit_guide() -> None:
     GUIDE_COMPONENT(data=context,key="fairlens_local_guide")
 
 def setup_page(title: str) -> None:
-    """Inject shared skin and the bounded Audit Guide on every page."""
+    """Inject the shared skin and local Audit Guide on every page."""
     st.session_state["fl_current_page"] = title
+    audit_guide()
     st.markdown(CSS, unsafe_allow_html=True)
     if st.session_state.get("fl_light_mode", False):
         st.markdown(LIGHT_MODE_CSS, unsafe_allow_html=True)
