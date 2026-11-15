@@ -41,6 +41,9 @@ navigation = st.navigation(
             st.Page("pages/11_Audit_Your_Model.py", title="Audit your model", icon=":material/fact_check:"),
             st.Page("pages/14_Health_Equity_Lab.py", title="Health lab (synthetic)", icon=":material/health_metrics:"),
         ],
+        "LIVE CONTEXT": [
+            st.Page("pages/18_Live_Consumer_Signals.py", title="Live consumer signals", icon=":material/update:"),
+        ],
     },
     position="sidebar",
     expanded=True,

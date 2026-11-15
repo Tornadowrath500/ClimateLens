@@ -19,7 +19,7 @@ The Streamlit app opens on the Home dashboard. It shows the active data source a
 5. **Experiment and mitigation labs** — explore how thresholds and input choices change measured outcomes.
 6. **Findings & report** — create a report from a deliberately pinned final test review.
 
-Other areas support applicant-level what-if exploration, proxy checks, an applicant map, and auditing an uploaded model. **Health equity lab** is a separate deterministic simulation with invented records; it illustrates how assumptions can change metrics and is not health data or a real clinical-model audit.
+Other areas support applicant-level what-if exploration, proxy checks, an applicant map, and auditing an uploaded model. **Live consumer signals** adds an hourly-refreshable view of recent CFPB complaint aggregates, with explicit caveats separating them from FairLens's historical credit-model audit. **Health equity lab** is a separate deterministic simulation with invented records; it illustrates how assumptions can change metrics and is not health data or a real clinical-model audit.
 
 ## Data and interpretation
 
@@ -29,7 +29,7 @@ Other areas support applicant-level what-if exploration, proxy checks, an applic
 - The age grouping is an exploratory analysis choice, not a legal category.
 - Synthetic demo records are invented and must never be presented as observed evidence.
 - The Health equity lab is reproducible synthetic data. It does not establish anything about real patients, tools, or health systems.
-- The app does not sync current applicant, lending, or patient information. Re-downloading the UCI benchmark does not make it current.
+- The app does not sync current applicant, lending, or patient information. Re-downloading the UCI benchmark does not make it current. The separate **Live consumer signals** page fetches recent aggregate complaint counts from the CFPB Consumer Complaint Database. The CFPB generally updates the source daily; FairLens caches results for up to one hour and offers a manual refresh. These U.S. complaint counts are not representative consumer rates, verified violations, lending outcomes, or evidence about model fairness.
 
 For claims, use the **Claim checker**, cite the source and analysis configuration, include group sizes and uncertainty, and distinguish observed differences from causal or legal conclusions.
 
@@ -87,7 +87,7 @@ The Streamlit Community Cloud app should be configured to use this repository, b
 
 ## Local AI Audit Guide
 
-The bottom-right FairLens chat offers page-specific starter questions about methods, metrics, aggregate results, uncertainty, and audit follow-up. It refuses personal financial, lending, health, legal, investment, and individual eligibility advice. Answers are educational and may be wrong; they are not financial advice.
+The FairLens chat sits at the lower-left of the main content area, clear of Streamlit's bottom-right controls, and offers page-specific starter questions about methods, metrics, aggregate results, uncertainty, and audit follow-up. It refuses personal financial, lending, health, legal, investment, and individual eligibility advice. Answers are educational and may be wrong; they are not financial advice.
 
 The local AI is optional and uses WebLLM with the Qwen2.5 0.5B Instruct model through WebGPU. Its runtime and model files are first fetched only after a visitor clicks **Download local AI to enable Q&A**. That opt-in is remembered in this browser, so other app tabs can initialize their own local runtime from cached files. The initial download may take several minutes; the chat shows actual transfer progress when available and streams replies as they are generated. If browser storage is cleared, model files may need to be fetched again. Questions and chat history are stored only in this browser, not sent to the app server. **Clear chat** removes saved history across the open tabs. The guide receives curated FairLens facts about the dataset, labels, metrics, methods, and limits, plus the current page title and any allow-listed aggregate pinned-review summary. It does not receive page charts, applicant rows, uploaded files, or personal records.
 
