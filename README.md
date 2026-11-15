@@ -84,3 +84,9 @@ python -m pytest
 
 The Streamlit Community Cloud app should be configured to use this repository, branch `main`, and `app.py`. GitHub Actions currently runs tests; that workflow is not the Streamlit deployment. Confirm deployments in Streamlit's app settings and logs. After a merge, verify the deployed revision and open the app to check the visible result.
 
+
+## AI Audit Guide
+
+The app includes an optional, tightly scoped Q&A helper for explaining FairLens metrics, aggregate pinned-review results, limitations, and sensible audit follow-up steps. It must not provide personal financial, lending, medical, or legal advice. It receives only an allow-listed aggregate review summary; applicant rows and uploaded files are not sent. Questions are sent to OpenAI only after submission, with Responses API storage disabled. Do not enter personal, applicant, patient, or account information.
+
+To enable the hosted helper, configure `OPENAI_API_KEY` in Streamlit Cloud app Secrets. Optionally set `FAIRLENS_AI_MODEL`; the default is `gpt-4.1-mini`. Without a key, the app explains that AI is unavailable and keeps all other pages usable. Model output is generated and can be wrong; verify important interpretations against the app's reported metrics and source documentation.
