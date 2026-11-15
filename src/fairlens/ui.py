@@ -603,7 +603,8 @@ export default function({parentElement,data}){
   try{localStorage.setItem(WINDOW_KEY,JSON.stringify({left:r.left,top:r.top,width:r.width,height:r.height}))}catch(e){}
  }
  function applyWindow(saved){
-  if(!saved||window.innerWidth<=760)return;
+  if(!saved)return;
+  if(window.innerWidth<=760){["left","top","right","bottom","width","height"].forEach(property=>panel.style.removeProperty(property));return}
   const width=clampWindow(Number(saved.width)||370,320,window.innerWidth-20);
   const height=clampWindow(Number(saved.height)||560,340,window.innerHeight-90);
   const left=clampWindow(Number(saved.left)||Math.max(10,window.innerWidth-width-24),8,window.innerWidth-width-8);
