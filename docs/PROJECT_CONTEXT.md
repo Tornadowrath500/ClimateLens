@@ -67,3 +67,4 @@ Streamlit Cloud should point to `Tornadowrath500/FairLens`, branch `main`, file 
 ## Open work
 
 See [Roadmap](ROADMAP.md) for known work. Treat checked items as verified only when the current implementation and checks support that status. Do not treat this brief as a substitute for reading the relevant source, data documentation, or test results.
+

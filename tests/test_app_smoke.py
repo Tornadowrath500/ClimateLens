@@ -26,6 +26,13 @@ PAGES = [
     "pages/9_Proxy_Detector.py",
     "pages/10_Mitigation_Lab.py",
     "pages/11_Audit_Your_Model.py",
+    "pages/0_Home.py",
+    "pages/12_Profile.py",
+    "pages/13_Tutorial.py",
+    "pages/14_Health_Equity_Lab.py",
+    "pages/15_Claim_Checker.py",
+    "pages/17_Overclaim_Game.py",
+    "pages/14_Hidden_Bias_Challenge.py",
 ]
 
 
@@ -58,3 +65,13 @@ def test_missing_dataset_offers_explicit_download_instead_of_crashing(
 
     assert not at.exception
     assert any("Download the dataset" in b.label for b in at.button)
+
+
+def test_light_mode_renders_and_default_page_is_home(synthetic_csv, monkeypatch):
+    monkeypatch.setenv("FAIRLENS_DATA_PATH", str(synthetic_csv))
+    at = AppTest.from_file(str(ROOT / "app.py"), default_timeout=180)
+    at.session_state["fl_light_mode"] = True
+    at.run()
+    assert not at.exception, [e.value for e in at.exception]
+    assert any("Make model decisions visible" in m.value for m in at.markdown)
+

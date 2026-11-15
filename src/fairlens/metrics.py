@@ -231,3 +231,4 @@ def best_threshold_by_cost(y_true, p_good, grid=DEFAULT_GRID) -> tuple[float, fl
     best = np.flatnonzero(costs <= costs.min() + 1e-12)
     pick = best[np.argmin(np.abs(np.asarray(grid)[best] - 0.5))]
     return float(grid[pick]), float(costs[pick])
+

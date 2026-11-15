@@ -39,9 +39,13 @@ For claims, use the **Claim checker**, cite the source and analysis configuratio
 | --- | --- |
 | **Applicant map** | Every applicant is a dot placed by similarity (PCA of non-sensitive inputs). Colour by score, group, mistakes or label; overlay a *fairness terrain* of look-alike regions where the two age groups are classified differently (blank where counts are too small); click a dot for a "why this score" chart, a look-alike check and a what-if path. |
 | **Applicant simulator** | Build a fictional applicant with sliders. Live score, per-input contributions, shortest what-if chain, and a one-click comparison of original and changed-group predictions. Inputs follow the historical benchmark, including credit history, credit amount, installment rate, and age. |
+| **Over-claim game** | Eight statements about audits: decide whether an audit like this can support each one, with an explanation after every round. |
+| **Interface helpers** | Breadcrumb header with a "next in the route" link, HUD-style corner frames, staggered entrance and signal-line animations (all disabled under reduced-motion settings), quick-jump page finder in the sidebar, a guided audit-route list with a "Next" link, hover definitions for specialist terms, an interactive error-cost explorer on Home, an animated threshold sweep in the Health lab, light and dark themes, and a print-friendly layout for sharing findings. |
 | **Hidden bias challenge** | Predict whether favorable classifications differ between age groups, then reveal validation-set rates, denominators, and 95% intervals. The challenge's 5-point comparison band is a game rule, not a fairness standard. |
 | **Proxy detector** | Cross-validated test of whether age can be recovered from the other inputs, per-input proxy strength, and a with/without-age outcome comparison. |
 | **Mitigation lab** | Baseline, cost-tuned threshold, input removal, reweighing and a group-threshold what-if on one cost-versus-gap map, with bootstrap intervals. |
+| **Health lab (synthetic)** | A fully simulated screening scenario: change a threshold, a score shift and a prevalence to see how sensitivity gaps move. Invented data only; not clinical evidence or health advice. |
+| **Claim checker** | Pick a common fairness claim (for example "the model is fair") and tick the evidence you actually have; the app shows what FairLens can and cannot support and what is still missing. Educational guidance, not a legal test. |
 | **Audit your own model** | Upload any CSV of decisions or scores plus a group column; get rates with intervals, error rates if truth is supplied, and plain-language findings. |
 
 ## Run locally
@@ -79,3 +83,4 @@ python -m pytest
 ## Deployment
 
 The Streamlit Community Cloud app should be configured to use this repository, branch `main`, and `app.py`. GitHub Actions currently runs tests; that workflow is not the Streamlit deployment. Confirm deployments in Streamlit's app settings and logs. After a merge, verify the deployed revision and open the app to check the visible result.
+

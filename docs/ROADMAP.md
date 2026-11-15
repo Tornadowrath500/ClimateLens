@@ -17,7 +17,7 @@ This roadmap separates shipped capabilities from work that still needs evidence.
 ## High-priority follow-up
 
 - [ ] Verify every page end-to-end on the currently deployed Streamlit version and record the deployed commit.
-- [ ] Add automated smoke coverage for navigation and the Claim checker / Health equity lab page rendering.
+- [x] Add automated smoke coverage for navigation and the Claim checker / Health equity lab page rendering (`tests/test_navigation.py`, `tests/test_app_smoke.py`).
 - [ ] Verify color contrast, keyboard navigation, mobile layouts, and screen-reader labels in both appearance modes.
 - [ ] Reconcile the README, data ethics page, submission guide, and app wording after future feature changes.
 - [ ] Confirm the app's Python version and dependency resolution are consistent between local, CI, and Streamlit Cloud.
@@ -33,3 +33,4 @@ This roadmap separates shipped capabilities from work that still needs evidence.
 ## Definition of done
 
 A change is done when the production Streamlit path uses it, its wording is accurate, it works on small screens and in both themes, relevant checks pass, and documentation describes the behavior that actually shipped.
+

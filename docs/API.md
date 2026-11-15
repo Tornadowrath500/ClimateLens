@@ -52,3 +52,4 @@ should call it instead of making direct `fetch` requests. The per-tab
 From the repository root, run `uvicorn backend.main:app --reload`. FastAPI
 serves the frontend at `/`. Set `FAIRLENS_SERVE_FRONTEND=0` to use a separate
 static server; configure `FAIRLENS_CORS_ORIGINS` with its allowed origins.
+

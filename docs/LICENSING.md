@@ -10,3 +10,4 @@ Before adding a project license, all contributors should agree on:
 - whether any third-party code or assets introduce additional terms.
 
 Do not assume the dataset license and repository software license are interchangeable. Once the team agrees, add the chosen license text at the repository root and update this page.
+

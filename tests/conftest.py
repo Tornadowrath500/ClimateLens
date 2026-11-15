@@ -57,3 +57,4 @@ def synthetic_csv(tmp_path, synthetic_frame):
     path = tmp_path / "german_credit.csv"
     synthetic_frame.to_csv(path, index=False)
     return path
+

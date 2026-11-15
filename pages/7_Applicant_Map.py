@@ -185,3 +185,4 @@ with st.expander("What would change this decision? (illustrative)"):
 if st.button("Open this applicant in the Simulator", type="primary"):
     st.session_state["sim_seed_row"] = row.reset_index(drop=True)
     st.switch_page("pages/8_Applicant_Simulator.py")
+

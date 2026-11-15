@@ -75,3 +75,4 @@ with st.expander("Peek at the raw records"):
 
 provenance_note(data)
 st.caption(f"Source: [UCI Statlog (German Credit Data)]({UCI_URL}). More in docs/DATA_AND_ETHICS.md.")
+

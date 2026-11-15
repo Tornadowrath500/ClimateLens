@@ -26,3 +26,4 @@ def proxy_report(data: pd.DataFrame, drop_status: bool = False) -> dict:
     per = [{"column": c, "feature": feature_label(c), "auc": _cv_auc(X[[c]], y)} for c in X.columns]
     table = pd.DataFrame(per).sort_values("auc", ascending=False).reset_index(drop=True)
     return {"overall_auc": _cv_auc(X, y), "per_feature": table, "n_young": int(y.sum()), "n": int(len(y))}
+

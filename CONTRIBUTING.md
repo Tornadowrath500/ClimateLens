@@ -33,3 +33,4 @@ AI coding assistants may be used as development tools, but contributors remain r
 ## Respectful review
 
 Critique methods and evidence, not people. Ask whether a result is reproducible and properly interpreted. Do not turn a group difference into an unsupported allegation.
+

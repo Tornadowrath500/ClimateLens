@@ -56,3 +56,4 @@ def test_download_dataset_respects_custom_output_path(tmp_path, synthetic_frame,
     assert destination.exists()
     assert destination.with_name("dataset_manifest.json").exists()
     assert len(downloaded) == len(synthetic_frame)
+

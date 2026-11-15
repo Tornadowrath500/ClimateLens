@@ -61,3 +61,4 @@ def plain_summary(t: pd.DataFrame) -> list[str]:
         elif r["below_four_fifths"]:
             lines.append(f"**Signal:** the ratio for {r['group']} is below 0.80, a common screening heuristic. It flags a gap to investigate, not proof of discrimination.")
     return lines
+

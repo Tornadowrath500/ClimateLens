@@ -55,3 +55,4 @@ def make_demo_dataset(n: int = 1000, seed: int = 7) -> pd.DataFrame:
     f["class"] = np.where(rng.random(n) < 1 / (1 + np.exp(-risk)), 2, 1)
     cols = [f"Attribute{i}" for i in range(1, 21)] + ["class"]
     return f[cols]
+
