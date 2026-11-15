@@ -25,6 +25,7 @@ navigation = st.navigation(
             st.Page("pages/2_Evaluate_the_Model.py", title="Model performance", icon=":material/monitoring:"),
             st.Page("pages/3_Investigate_Group_Outcomes.py", title="Group outcomes", icon=":material/groups:"),
             st.Page("pages/5_Findings_and_Report.py", title="Findings & report", icon=":material/description:"),
+            st.Page("pages/15_Claim_Checker.py", title="Claim checker", icon=":material/rule:"),
             st.Page("pages/6_Methodology_and_Limitations.py", title="Methods & limits", icon=":material/science:"),
         ],
         "EXPLORE & TEST": [
