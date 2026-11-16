@@ -19,3 +19,4 @@ def predict_all_bad(sample_count: int) -> np.ndarray:
     if sample_count < 0:
         raise ValueError("sample_count cannot be negative.")
     return np.full(sample_count, BAD_RISK_LABEL, dtype=int)
+

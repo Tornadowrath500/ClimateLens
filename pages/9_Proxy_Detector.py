@@ -79,3 +79,4 @@ st.markdown(
     f"- **Limitation:** the {YOUNG} group is small in the validation split, so gaps move a lot by chance. Check stability on the Group outcomes page.\n"
     "- **Takeaway:** if the gap barely moves when age is removed, the model is getting the information from somewhere else."
 )
+

@@ -70,3 +70,4 @@ with st.expander("What do these terms mean?"):
                        ("recall_good", "Recall (Good)"), ("recall_bad", "Recall (Bad)"),
                        ("f1", f"F1 (Good): {s['f1']:.2f}"), ("auc", f"AUC: {s['auc']:.2f}"), ("cost", "Cost per applicant")):
         st.markdown(f"**{label}.** {METRIC_HELP[key]}")
+

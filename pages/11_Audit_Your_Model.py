@@ -90,3 +90,4 @@ show_table(t.round(3))
 st.download_button("Download group table (CSV)", t.to_csv(index=False), "fairlens_group_audit.csv", "text/csv")
 if actual is None:
     st.info("Add a true-outcome column to also see true-positive and false-positive rates by group.")
+

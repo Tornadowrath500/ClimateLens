@@ -44,3 +44,4 @@ def test_group_metrics_show_nan_when_denominator_is_missing() -> None:
 def test_group_metrics_reject_mismatched_lengths() -> None:
     with pytest.raises(ValueError, match="same number"):
         group_outcome_metrics([1, 2], [1, 2], ["A"])
+

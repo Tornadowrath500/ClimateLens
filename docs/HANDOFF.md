@@ -27,3 +27,4 @@
 - The 95% Wilson intervals describe uncertainty for individual group rates; overlap is not a formal test of a difference.
 - Threshold selection is validation-only. Different thresholds by age are shown only as an explicitly cautionary what-if.
 - The project itself has not selected a software license; the UCI dataset's CC BY 4.0 license does not license this code automatically.
+

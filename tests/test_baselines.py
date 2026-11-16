@@ -14,3 +14,4 @@ def test_all_good_baseline_accepts_zero_rows() -> None:
 def test_all_good_baseline_rejects_negative_size() -> None:
     with pytest.raises(ValueError):
         predict_all_good(-1)
+

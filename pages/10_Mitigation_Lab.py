@@ -75,3 +75,4 @@ for s_ in strategies.values():
         st.warning(s_.caution)
 callout("Honest framing", "Reweighing and threshold changes are standard research techniques, but a model that looks fairer on one metric in one validation "
         "split may not generalise. Treat this page as a way to build intuition about trade-offs.")
+

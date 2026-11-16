@@ -306,3 +306,4 @@ window.addEventListener("hashchange", route);
 window.addEventListener("click", (e) => { if (e.target.closest?.(".nav-link")) document.body.classList.remove("nav-open"); });
 store.subscribe(() => { if (!busy) route(); else render(); });
 route();
+

@@ -5,7 +5,7 @@ import streamlit as st
 from fairlens.ui import PROFILE_ACCENTS, callout, setup_page
 
 
-setup_page("Sign up / log in")
+setup_page("Session profile")
 if st.session_state.pop("fl_profile_saved", False):
     st.success("Profile updated. Your suggestions and appearance now use these settings.")
 
@@ -25,7 +25,7 @@ callout(
     "Profile details are held in Streamlit session state while this browser session is active; this build has no account database and does not write them to disk. Age, sex, and personal status only shape page suggestions and never enter prediction or audit calculations. Persistent accounts and password sign-in are not configured yet.",
 )
 
-signup, login, customize = st.tabs(["Sign up", "Log in / resume this session", "Customize profile"])
+signup, login, customize = st.tabs(["Create session profile", "Resume this session", "Customize profile"])
 
 with signup:
     st.subheader("Create your profile")
@@ -75,7 +75,7 @@ with login:
             st.page_link("pages/13_Tutorial.py", label="Take the animated tour", icon=":material/play_circle:")
             st.page_link("pages/0_Home.py", label="Go to FairLens home", icon=":material/arrow_forward:")
     else:
-        st.info("No profile is available in this session. Persistent accounts are not configured yet; create a session profile in the Sign up tab.")
+        st.info("No profile is available in this session. Persistent accounts are not configured yet; create a session profile in the first tab.")
 
 with customize:
     profile = st.session_state.get("fl_profile")
@@ -121,3 +121,4 @@ with customize:
             st.rerun()
 
 st.caption("You can also use FairLens without a profile. Demographic details are never used to evaluate a real applicant.")
+

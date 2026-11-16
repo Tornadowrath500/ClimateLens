@@ -99,3 +99,4 @@ def look_alikes(md: MapData, i: int, k: int = 15) -> dict:
                       "actual_good": float(sub["actual_good"].mean()) if len(idx) else np.nan,
                       "mean_p_good": float(sub["p_good"].mean()) if len(idx) else np.nan, "ids": idx.tolist()}
     return out
+

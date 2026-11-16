@@ -48,3 +48,4 @@ st.markdown(
     "- AI assistance: this application was developed with help from AI coding assistants; all results are computed from the data."
 )
 st.caption("Fuller project contract: docs/DATA_AND_ETHICS.md and docs/ROADMAP.md.")
+

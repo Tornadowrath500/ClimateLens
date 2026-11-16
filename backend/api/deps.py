@@ -16,3 +16,4 @@ def session_header(value: Optional[str] = Header(None, alias="X-FairLens-Session
     if value is not None and not SESSION_RE.fullmatch(value):
         raise ServiceError(400, "invalid_session", "The browser session identifier is invalid.")
     return value
+
