@@ -7,6 +7,7 @@ numpy>=1.26,<3
 scikit-learn>=1.5,<2
 plotly>=5.24,<7
 requests>=2.32,<3
+tzdata>=2024.1
 ucimlrepo>=0.0.7
 pytest>=8.3,<10
 -e .

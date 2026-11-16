@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from datetime import date, timedelta, timezone, datetime
+from datetime import date, timedelta, datetime
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -27,13 +28,13 @@ callout(
     "caution",
 )
 
-today = datetime.now(timezone.utc).date()
+today = datetime.now(ZoneInfo("America/Los_Angeles")).date()
 range_days = st.selectbox(
     "Time window",
-    options=(30, 90, 365),
+    options=(2, 30, 90, 365),
     format_func=lambda days: f"Past {days} days",
-    index=2,
-    help="The selected period ends today. The CFPB API’s maximum date is exclusive.",
+    index=0,
+    help="The selected period ends today in Pacific Time. The CFPB API’s maximum date is exclusive.",
 )
 start_date = today - timedelta(days=range_days - 1)
 end_date_exclusive = today + timedelta(days=1)
@@ -42,7 +43,7 @@ if st.button("Refresh now", icon=":material/refresh:", help="Clear the one-hour 
     cached_complaint_summary.clear()
     st.rerun()
 
-st.caption(f"Received {start_date:%b %d, %Y} through {today:%b %d, %Y} · Updates at the source are generally daily; FairLens caches results for up to one hour.")
+st.caption(f"Received {start_date:%b %d, %Y} through {today:%b %d, %Y} (Pacific Time) · Updates at the source are generally daily; FairLens caches results for up to one hour.")
 
 try:
     with st.spinner("Loading aggregated complaint data from the CFPB…"):
